@@ -16,8 +16,8 @@
 #define BYPASS2_2     6
 #define VENT_CHEMINEE 7
 #define VENT_CAVE     8
-#define SELECT_VMC    9
 #define VENT_4        16
+#define SELECT_VMC    9
 #define V12_1         0
 #define V12_2         1
 #define V12_ON        2    // a interchanger avec V12_IN (pour LED)
@@ -39,25 +39,21 @@
 //EndStops
 #define ENDSTOP_OPEN HIGH
 #define ENDSTOP_CLOSED LOW
-#if ENDSTOPS
+
 #define EndStopIsClosed(EndStop) digitalRead(EndStop)
-#else
-#define EndStopIsClosed(EndStop){delay(TEMPS_BYPASS);return ENDSTOP_CLOSED}
-#endif
+
 
 //ByPass
-#define BYPASS_ACT HIGH
-#define BYPASS_DESACT LOW
+#define BYPASS_ACT LOW
+#define BYPASS_DESACT HIGH
 //!!Ajouter Timeout
-#define Bypass1Ouvrir() {\
-    digitalWrite(BYPASS1_1;BYPASS_ACT);\
-    while(EndStopIsClosed(ENDSTOP1_1)!= ENDSTOP_CLOSED);\
-    digitalWrite(BYPASS1_1;BYPASS_DESACT)}
-
-#define Bypass1Fermer() {\
-    digitalWrite(BYPASS1_2;BYPASS_ACT);\
-    while(EndStopIsClosed(ENDSTOP1_2)!= ENDSTOP_CLOSED);\
-    digitalWrite(BYPASS1_2;BYPASS_DESACT)}
+#if ENDSTOPS
+#define Bypass1Ouvrir() {digitalWrite(BYPASS1_1,BYPASS_ACT);while(EndStopIsClosed(ENDSTOP1_1)!= ENDSTOP_CLOSED);digitalWrite(BYPASS1_1,BYPASS_DESACT);}
+#define Bypass1Fermer() {digitalWrite(BYPASS1_2,BYPASS_ACT);while(EndStopIsClosed(ENDSTOP1_2)!= ENDSTOP_CLOSED);digitalWrite(BYPASS1_2,BYPASS_DESACT);}
+#else
+#define Bypass1Ouvrir() {digitalWrite(BYPASS1_1,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS1_1,BYPASS_DESACT);}
+#define Bypass1Fermer() {digitalWrite(BYPASS1_2,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS1_2,BYPASS_DESACT);}
+#endif
 
 #if BYPASS2                           //!!Ajouter Timeout
 #define Bypass2Ouvrir() {\

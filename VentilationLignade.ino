@@ -57,10 +57,14 @@ void setup() {
 
   //Pins Bypass
   pinMode(BYPASS1_1, OUTPUT);
+  digitalWrite(BYPASS1_1, BYPASS_DESACT);
   pinMode(BYPASS1_2, OUTPUT);
+  digitalWrite(BYPASS1_2, BYPASS_DESACT);
 #if BYPASS2
   pinMode(BYPASS2_1, OUTPUT);
+   digitalWrite(BYPASS2_1, BYPASS_DESACT);
   pinMode(BYPASS2_2, OUTPUT);
+   digitalWrite(BYPASS2_2, BYPASS_DESACT);
 #endif
 
   //Pins Ventilos
@@ -171,29 +175,29 @@ void loop() {
         Serial.println("Etat courant : ");
         switch (MachineEtat)
         {
-          case STATE_1 : 
-          Serial.println("               Etat 1");
-          break;
-          case STATE_2 : 
-          Serial.println("               Etat 2");
-          break;
-          case STATE_3 : 
-          Serial.println("               Etat 3");
-          break;
-          case STATE_4 : 
-          Serial.println("               Etat 4");
-          break;
-          case STATE_T : 
-          Serial.println("               Etat Transition");
-          break;
-          case STATE_5 : 
-          Serial.println("               Etat 5");
-          break;
-          case STATE_6 : 
-          Serial.println("               Etat 6");
-          break;
+          case STATE_1 :
+            Serial.println("               Etat 1");
+            break;
+          case STATE_2 :
+            Serial.println("               Etat 2");
+            break;
+          case STATE_3 :
+            Serial.println("               Etat 3");
+            break;
+          case STATE_4 :
+            Serial.println("               Etat 4");
+            break;
+          case STATE_T :
+            Serial.println("               Etat Transition");
+            break;
+          case STATE_5 :
+            Serial.println("               Etat 5");
+            break;
+          case STATE_6 :
+            Serial.println("               Etat 6");
+            break;
           default : Serial.println("Erreur - Etat inconnu");
-          break;
+            break;
         }
       }
 
@@ -366,12 +370,12 @@ void loop() {
     switch (MachineEtat) {
       case STATE_1 :
         DebugMessage("Etat 1");
-        //Selection Double Flux
+        Bypass1Ouvrir();
 
         break;
       case STATE_2 :
         DebugMessage("Etat 2");
-
+        Bypass1Fermer();
         break;
       case STATE_3 :
         DebugMessage("Etat 3");
