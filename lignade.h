@@ -25,11 +25,8 @@
 
 
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
-#define THERMOSTATS 1                  //obligatoire
 #define ENDSTOPS 0                     //Facultatif
-#define BYPASS1 1                      //obligatoire
-#define BYPASS2 0                      //Facultatif
-#define VENTILOS 1                     //obligatoire
+#define BYPASS2 1                      //Facultatif
 #define MONITORING_12V 0               //Facultatif
 
 /*----- Methode alternative aux blocs inhibés           -----*/
@@ -50,7 +47,7 @@
 //ByPass
 #define BYPASS_ACT HIGH
 #define BYPASS_DESACT LOW
-#if BYPASS1                           //!!Ajouter Timeout
+                                     //!!Ajouter Timeout
 #define Bypass1Ouvrir() {\
     digitalWrite(BYPASS1_1;BYPASS_ACT);\
     while(EndStopIsClosed(ENDSTOP1_1)!= ENDSTOP_CLOSED);\
@@ -60,10 +57,7 @@
     digitalWrite(BYPASS1_2;BYPASS_ACT);\
     while(EndStopIsClosed(ENDSTOP1_2)!= ENDSTOP_CLOSED);\
     digitalWrite(BYPASS1_2;BYPASS_DESACT)}
-#else
-#define Bypass1Ouvrir() {}
-#define Bypass1Fermer() {}
-#endif
+
 #if BYPASS2                           //!!Ajouter Timeout
 #define Bypass1Ouvrir() {\
     digitalWrite(BYPASS2_1;BYPASS_ACT);\
@@ -82,13 +76,8 @@
 //Ventilos
 #define VENT_ON HIGH
 #define VENT_OFF LOW
-#if VENTILOS
-#define VentiloMarche(Ventilo) {digitalWrite(Ventilo;VENT_ON)}
-#define VentiloArret(Ventilo) {digitalWrite(Ventilo;VENT_OFF)}
-#else
-#define VentiloMarche(Ventilo) {}
-#define VentiloArret(Ventilo) {}
-#endif
+#define VentiloMarche(Ventilo) {digitalWrite(Ventilo,VENT_ON);}
+#define VentiloArret(Ventilo) {digitalWrite(Ventilo,VENT_OFF);}
 
 //Monitoring 12V
 #define ALIM_ON HIGH

@@ -1,7 +1,7 @@
 #include "lignade.h"
 
 /*----- Autorise/Inhibe les messages sur le serial port -----*/
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG
 #define DebugMessage(str) {Serial.println(str);}
@@ -9,7 +9,9 @@
 #define DebugMessage(str) {}
 #endif
 
-
+/*-----------------------------------------------------------*/
+/*----- Definition Machine d'Etats                      -----*/
+/*-----------------------------------------------------------*/
 enum StateMachine {
   STATE_1,
   STATE_2,
@@ -58,17 +60,20 @@ void setup() {
   //Pins Ventilos
   pinMode(VENT_CHEMINEE, OUTPUT);
   pinMode(VENT_CAVE, OUTPUT);
-  pinMode(SELECT_VMC, OUTPUT);
   pinMode(VENT_4, OUTPUT);
 
+  //Pin VMC
+  pinMode(SELECT_VMC, OUTPUT);
+  
   //Pins Monitoring 12V
-
   pinMode(V12_1, OUTPUT);
 #if MONITORING_12V
   pinMode(V12_ON, OUTPUT);
   pinMode(V12_2, OUTPUT);
   pinMode(V12_IN, INPUT);
 #endif
+
+
 
   if (TempOver(T_EXT_15))
   {
@@ -227,33 +232,35 @@ void loop() {
   if (StateChanged == true)
   {
     StateChanged = false;
+    // Arret des Ventilos
+    VentiloArret(VENT_CHEMINEE);
+    VentiloArret(VENT_CAVE);
+    VentiloArret(VENT_4);
+    
     switch (MachineEtat) {
       case STATE_1 :
-StateChanged = false;
+    //Selection Double Flux
+    
 
         break;
       case STATE_2 :
 
-StateChanged = false;
         break;
       case STATE_3 :
-StateChanged = false;
+
 
         break;
       case STATE_4 :
-StateChanged = false;
+
 
         break;
       case STATE_T :
-StateChanged = false;
 
         break;
       case STATE_5 :
-StateChanged = false;
-
+      
         break;
       case STATE_6 :
-StateChanged = false;
 
         break;
 
