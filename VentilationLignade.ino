@@ -1,7 +1,7 @@
 #include "lignade.h"
 
 /*----- Autorise/Inhibe les messages sur le serial port -----*/
-#define DEBUG 0
+#define DEBUG 1
 
 #if DEBUG
 #define DebugMessage(str) {Serial.println(str);}
@@ -24,6 +24,12 @@ enum StateMachine {
 
 bool StateChanged = true;
 
+enum Modes {
+  MAINTENANCE,
+  NORMAL
+} Mode;
+
+bool Text15 = THERM_OFF, Text24 = THERM_OFF, Tin22 = THERM_OFF, TChem = THERM_OFF;
 /*-----------------------------------------------------------*/
 /*----- Fonction d'initialisation                       -----*/
 /*-----------------------------------------------------------*/
@@ -64,7 +70,7 @@ void setup() {
 
   //Pin VMC
   pinMode(SELECT_VMC, OUTPUT);
-  
+
   //Pins Monitoring 12V
   pinMode(V12_1, OUTPUT);
 #if MONITORING_12V
@@ -74,6 +80,7 @@ void setup() {
 #endif
 
 
+  Mode = NORMAL;
 
   if (TempOver(T_EXT_15))
   {
@@ -90,99 +97,218 @@ void setup() {
       MachineEtat = STATE_2;
     }
   }
+  DebugMessage("Etat à l'initialisation : ");
+  DebugMessage(MachineEtat);
 }
 /*-----------------------------------------------------------*/
 /*----- Machine d'états                                 -----*/
 /*-----------------------------------------------------------*/
 void loop() {
+  byte SerialRx[80];
+  int rd;
+  rd = Serial.available();
+  if (rd > 0)
+  {
+    rd = Serial.readBytes((char *)SerialRx, rd);
+    if (Mode == MAINTENANCE)
+    {
+      if (strcmp((char *)SerialRx, "T_EXT_15 ON") == 0)
+      {
+        Text15 = true;
+        if (Text24)
+          Serial.println("Temp. exterieure > 24Deg");
+        else
+          Serial.println("Temp. exterieure entre 15 et 24Deg");
+      }
+      else if (strcmp((char *)SerialRx, "T_EXT_15 OFF") == 0)
+      {
+        Text15 = false;
+        Text24 = false;
+        Serial.println("Temp. exterieure < 15Deg");
+      }
+      else if (strcmp((char *)SerialRx, "T_EXT_24 ON") == 0)
+      {
+        Text24 = true;
+        Text15 = true;
+        Serial.println("Temp. exterieure > 24Deg");
+      }
+      else if (strcmp((char *)SerialRx, "T_EXT_24 OFF") == 0)
+      {
+        Text24 = false;
+        if (Text15)
+          Serial.println("Temp. exterieure entre 15 et 24Deg");
+        else
+          Serial.println("Temp. exterieure < 15Deg");
+
+      }
+      else if (strcmp((char *)SerialRx, "T_INT_22 ON") == 0)
+      {
+        Tin22 = true;
+        Serial.println("Temp. interieure > 22Deg");
+      }
+      else if (strcmp((char *)SerialRx, "T_INT_22 OFF") == 0)
+      {
+        Tin22 = false;
+        Serial.println("Temp. interieure < 22Deg");
+      }
+      else if (strcmp((char *)SerialRx, "T_CHEMINEE ON") == 0)
+      {
+        TChem = true;
+        Serial.println("Feu Cheminee allumee");
+      }
+      else if (strcmp((char *)SerialRx, "T_CHEMINEE OFF") == 0)
+      {
+        TChem = false;
+        Serial.println("Feu Cheminee eteint");
+      }
+      else
+      {
+        Serial.println("Commande non reconnue");
+        Serial.println("Utiliser : THERMOSTAT ETAT");
+        Serial.println("    Avec : THERMOSTAT = T_EXT_15 / T_EXT_24 / T_INT_22 / T_CHEMINEE");
+        Serial.println("           ETAT       = ON / OFF");
+        Serial.println("");
+        Serial.println("Etat courant : ");
+        switch (MachineEtat)
+        {
+          case STATE_1 : 
+          Serial.println("               Etat 1");
+          break;
+          case STATE_2 : 
+          Serial.println("               Etat 2");
+          break;
+          case STATE_3 : 
+          Serial.println("               Etat 3");
+          break;
+          case STATE_4 : 
+          Serial.println("               Etat 4");
+          break;
+          case STATE_T : 
+          Serial.println("               Etat Transition");
+          break;
+          case STATE_5 : 
+          Serial.println("               Etat 5");
+          break;
+          case STATE_6 : 
+          Serial.println("               Etat 6");
+          break;
+          default : Serial.println("Erreur - Etat inconnu");
+          break;
+        }
+      }
+
+    }
+    if (strcmp((char *)SerialRx, "MAINT") == 0)
+    {
+      Mode = MAINTENANCE;
+      Serial.println("Entree Mode Maintenance");
+    }
+    else if (strcmp((char *)SerialRx, "NORM") == 0)
+    {
+      Mode = NORMAL;
+      Serial.println("Sortie Mode Maintenance");
+    }
+    else if (Mode == NORMAL)
+    {
+      Serial.println("Mode Normal : Pas de commande recue");
+    }
+  }
+
+  if (Mode == NORMAL)
+  {
+    Text15 = TempOver(T_EXT_15);
+    Text24 = TempOver(T_EXT_24);
+    Tin22 = TempOver(T_INT_22);
+    TChem = TempOver(T_CHEMINEE);
+  }
 
   switch (MachineEtat) {
     case STATE_1 :
-      if (TempOver(T_CHEMINEE))
+      if (TChem)
       {
         MachineEtat = STATE_2;
         StateChanged = true;
       }
-      else if (TempOver(T_EXT_15))
+      else if (Text15)
       {
         MachineEtat = STATE_3;
         StateChanged = true;
       }
       break;
     case STATE_2 :
-      if (!TempOver(T_CHEMINEE))
+      if (!TChem)
       {
         MachineEtat = STATE_1;
         StateChanged = true;
       }
-      else if (TempOver(T_EXT_15))
+      else if (Text15)
       {
         MachineEtat = STATE_4;
         StateChanged = true;
       }
       break;
     case STATE_3 :
-      if (TempOver(T_EXT_24))
+      if (Text24)
       {
         MachineEtat = STATE_T;
         StateChanged = true;
       }
-      else if (TempOver(T_CHEMINEE))
+      else if (TChem)
       {
         MachineEtat = STATE_4;
         StateChanged = true;
       }
-      else if (!TempOver(T_EXT_15))
+      else if (!Text15)
       {
         MachineEtat = STATE_1;
         StateChanged = true;
       }
       break;
     case STATE_4 :
-      if (TempOver(T_EXT_24))
+      if (Text24)
       {
         MachineEtat = STATE_T;
         StateChanged = true;
       }
-      else if (!TempOver(T_CHEMINEE))
+      else if (!TChem)
       {
         MachineEtat = STATE_3;
         StateChanged = true;
       }
-      else if (!TempOver(T_EXT_15))
+      else if (!Text15)
       {
         MachineEtat = STATE_2;
         StateChanged = true;
       }
       break;
     case STATE_5 :
-      if (TempOver(T_INT_22))
+      if (Tin22)
       {
         MachineEtat = STATE_6;
         StateChanged = true;
       }
-      else if (!TempOver(T_EXT_24))
+      else if (!Text24)
       {
         MachineEtat = STATE_T;
         StateChanged = true;
       }
       break;
     case STATE_6 :
-      if (!TempOver(T_INT_22))
+      if (!Tin22)
       {
         MachineEtat = STATE_5;
         StateChanged = true;
       }
-      else if (!TempOver(T_EXT_24))
+      else if (!Text24)
       {
         MachineEtat = STATE_T;
         StateChanged = true;
       }
       break;
     case STATE_T :
-      if (TempOver(T_EXT_24))
+      if (Text24)
       {
-        if (TempOver(T_INT_22))
+        if (Tin22)
         {
           MachineEtat = STATE_6;
           StateChanged = true;
@@ -195,7 +321,7 @@ void loop() {
       }
       else
       {
-        if (TempOver(T_CHEMINEE))
+        if (TChem)
         {
           MachineEtat = STATE_4;
           StateChanged = true;
@@ -207,15 +333,15 @@ void loop() {
         }
       }
       break;
-  default :
-      if (TempOver(T_EXT_15))
+    default :
+      if (Text15)
       {
         MachineEtat = STATE_T;
         StateChanged = true;
       }
       else
       {
-        if (TempOver(T_CHEMINEE))
+        if (TChem)
         {
           MachineEtat = STATE_1;
           StateChanged = true;
@@ -236,36 +362,43 @@ void loop() {
     VentiloArret(VENT_CHEMINEE);
     VentiloArret(VENT_CAVE);
     VentiloArret(VENT_4);
-    
+
     switch (MachineEtat) {
       case STATE_1 :
-    //Selection Double Flux
-    
+        DebugMessage("Etat 1");
+        //Selection Double Flux
 
         break;
       case STATE_2 :
+        DebugMessage("Etat 2");
 
         break;
       case STATE_3 :
+        DebugMessage("Etat 3");
 
 
         break;
       case STATE_4 :
+        DebugMessage("Etat 4");
 
 
         break;
       case STATE_T :
+        DebugMessage("Etat Transition");
 
         break;
       case STATE_5 :
-      
+        DebugMessage("Etat 5");
+
         break;
       case STATE_6 :
+        DebugMessage("Etat 6");
 
         break;
 
-    default :
-    StateChanged = false;
+      default :
+        MachineEtat = STATE_1;
+        StateChanged = true;
         break;
     }
   }

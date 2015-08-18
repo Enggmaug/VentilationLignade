@@ -33,13 +33,14 @@
 //Thermostats
 #define THERM_ON HIGH
 #define THERM_OFF LOW
+
 #define TempOver(Thermostat) digitalRead(Thermostat)
 
 //EndStops
 #define ENDSTOP_OPEN HIGH
 #define ENDSTOP_CLOSED LOW
 #if ENDSTOPS
-#define EndStopIsClosed(EndStop) {digitalRead(EndStop)}
+#define EndStopIsClosed(EndStop) digitalRead(EndStop)
 #else
 #define EndStopIsClosed(EndStop){delay(TEMPS_BYPASS);return ENDSTOP_CLOSED}
 #endif
@@ -47,7 +48,7 @@
 //ByPass
 #define BYPASS_ACT HIGH
 #define BYPASS_DESACT LOW
-                                     //!!Ajouter Timeout
+//!!Ajouter Timeout
 #define Bypass1Ouvrir() {\
     digitalWrite(BYPASS1_1;BYPASS_ACT);\
     while(EndStopIsClosed(ENDSTOP1_1)!= ENDSTOP_CLOSED);\
@@ -59,12 +60,12 @@
     digitalWrite(BYPASS1_2;BYPASS_DESACT)}
 
 #if BYPASS2                           //!!Ajouter Timeout
-#define Bypass1Ouvrir() {\
+#define Bypass2Ouvrir() {\
     digitalWrite(BYPASS2_1;BYPASS_ACT);\
     while(EndStopIsClosed(ENDSTOP2_1)!= ENDSTOP_CLOSED);\
     digitalWrite(BYPASS2_1;BYPASS_DESACT)}
 
-#define Bypass1Fermer() {\
+#define Bypass2Fermer() {\
     digitalWrite(BYPASS2_2;BYPASS_ACT);\
     while(EndStopIsClosed(ENDSTOP2_2)!= ENDSTOP_CLOSED);\
     digitalWrite(BYPASS2_2;BYPASS_DESACT)}
@@ -108,5 +109,6 @@ signed char AlimToUse = V12_1;
       Alim_On()}}
 #else
 #define Alim_On() {digitalWrite(V12_1;ALIM_ON);}
-#endif}
+#endif
+
 
