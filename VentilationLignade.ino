@@ -29,7 +29,7 @@ enum Modes {
   NORMAL
 } Mode;
 
-bool Text15 = THERM_OFF, Text24 = THERM_OFF, Tin22 = THERM_OFF, TChem = THERM_OFF;
+bool Text15 = THERM_ON, Text24 = THERM_ON, Tin22 = THERM_ON, TChem = THERM_ON;
 /*-----------------------------------------------------------*/
 /*----- Fonction d'initialisation                       -----*/
 /*-----------------------------------------------------------*/
@@ -38,7 +38,7 @@ void setup() {
 #if DEBUG
   Serial.begin(38400);
 #endif
-
+  delay(5000);
   // Pins EndStops
 #if ENDSTOPS
   pinMode(ENDSTOP1_1, INPUT);
@@ -62,9 +62,9 @@ void setup() {
   digitalWrite(BYPASS1_2, BYPASS_DESACT);
 #if BYPASS2
   pinMode(BYPASS2_1, OUTPUT);
-   digitalWrite(BYPASS2_1, BYPASS_DESACT);
+  digitalWrite(BYPASS2_1, BYPASS_DESACT);
   pinMode(BYPASS2_2, OUTPUT);
-   digitalWrite(BYPASS2_2, BYPASS_DESACT);
+  digitalWrite(BYPASS2_2, BYPASS_DESACT);
 #endif
 
   //Pins Ventilos
@@ -78,7 +78,7 @@ void setup() {
   //Pins Monitoring 12V
   pinMode(V12_1, OUTPUT);
 #if MONITORING_12V
-  pinMode(V12_ON, OUTPUT);
+  pinMode(V12_SEL, OUTPUT);
   pinMode(V12_2, OUTPUT);
   pinMode(V12_IN, INPUT);
 #endif
@@ -86,23 +86,35 @@ void setup() {
 
   Mode = NORMAL;
 
-  if (TempOver(T_EXT_15))
+  MachineEtat = STATE_T;
+
+  DebugMessage("Etat a l'initialisation : ");
+  switch (MachineEtat)
   {
-    MachineEtat = STATE_T;
+    case STATE_1 :
+      Serial.println("               Etat 1");
+      break;
+    case STATE_2 :
+      Serial.println("               Etat 2");
+      break;
+    case STATE_3 :
+      Serial.println("               Etat 3");
+      break;
+    case STATE_4 :
+      Serial.println("               Etat 4");
+      break;
+    case STATE_T :
+      Serial.println("               Etat Transition");
+      break;
+    case STATE_5 :
+      Serial.println("               Etat 5");
+      break;
+    case STATE_6 :
+      Serial.println("               Etat 6");
+      break;
+    default : Serial.println("Erreur - Etat inconnu");
+      break;
   }
-  else
-  {
-    if (TempOver(T_CHEMINEE))
-    {
-      MachineEtat = STATE_1;
-    }
-    else
-    {
-      MachineEtat = STATE_2;
-    }
-  }
-  DebugMessage("Etat à l'initialisation : ");
-  DebugMessage(MachineEtat);
 }
 /*-----------------------------------------------------------*/
 /*----- Machine d'états                                 -----*/
@@ -362,42 +374,61 @@ void loop() {
   if (StateChanged == true)
   {
     StateChanged = false;
-    // Arret des Ventilos
-    VentiloArret(VENT_CHEMINEE);
-    VentiloArret(VENT_CAVE);
     VentiloArret(VENT_4);
+    VentiloArret(VENT_CAVE);
+    VentiloArret(VENT_CHEMINEE);
 
     switch (MachineEtat) {
       case STATE_1 :
         DebugMessage("Etat 1");
-        Bypass1Ouvrir();
+        Bypass1Ouvrir(); // Puit Canadien
+        VentiloArret(VENT_CAVE);
+        VentiloArret(VENT_CHEMINEE); // Insufle Maison
 
         break;
       case STATE_2 :
         DebugMessage("Etat 2");
-        Bypass1Fermer();
+        Bypass1Ouvrir(); // Puit Canadien
+        VentiloArret(VENT_CAVE);
+        VentiloMarche(VENT_CHEMINEE); // Insufle Cheminée
+
         break;
       case STATE_3 :
         DebugMessage("Etat 3");
-
+        Bypass1Fermer(); // Extérieur
+        VentiloMarche(VENT_CAVE); //Puit Canadien vers cave
+        VentiloArret(VENT_CHEMINEE); // Insufle Maison
 
         break;
       case STATE_4 :
         DebugMessage("Etat 4");
-
+        Bypass1Fermer(); // Extérieur
+        VentiloMarche(VENT_CAVE); //Puit Canadien vers cave
+        VentiloMarche(VENT_CHEMINEE); // Insufle Cheminée
 
         break;
       case STATE_T :
         DebugMessage("Etat Transition");
+        if (!Text24) {
+          Bypass2Ouvrir();
+        }
+        else
+        {
+          Bypass1Ouvrir(); // Puit Provençal
+          VentiloArret(VENT_CAVE);
+          VentiloArret(VENT_CHEMINEE); // Insufle Maison
+        }
 
         break;
       case STATE_5 :
         DebugMessage("Etat 5");
+        Bypass2Ouvrir();
+
 
         break;
       case STATE_6 :
         DebugMessage("Etat 6");
-
+        Bypass2Fermer();
         break;
 
       default :
