@@ -126,6 +126,10 @@ void loop() {
   if (rd > 0)
   {
     rd = Serial.readBytes((char *)SerialRx, rd);
+    Serial.print(">>");
+    Serial.print((char *)SerialRx);
+    Serial.println("");
+    
     if (Mode == MAINTENANCE)
     {
       if (strcmp((char *)SerialRx, "T_EXT_15 ON") == 0)
