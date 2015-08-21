@@ -83,38 +83,9 @@ void setup() {
   pinMode(V12_IN, INPUT);
 #endif
 
-
   Mode = NORMAL;
-
   MachineEtat = STATE_T;
-
-  DebugMessage("Etat a l'initialisation : ");
-  switch (MachineEtat)
-  {
-    case STATE_1 :
-      Serial.println("               Etat 1");
-      break;
-    case STATE_2 :
-      Serial.println("               Etat 2");
-      break;
-    case STATE_3 :
-      Serial.println("               Etat 3");
-      break;
-    case STATE_4 :
-      Serial.println("               Etat 4");
-      break;
-    case STATE_T :
-      Serial.println("               Etat Transition");
-      break;
-    case STATE_5 :
-      Serial.println("               Etat 5");
-      break;
-    case STATE_6 :
-      Serial.println("               Etat 6");
-      break;
-    default : Serial.println("Erreur - Etat inconnu");
-      break;
-  }
+  DebugMessage("Init");
 }
 /*-----------------------------------------------------------*/
 /*----- Machine d'états                                 -----*/
@@ -129,7 +100,7 @@ void loop() {
     Serial.print(">>");
     Serial.print((char *)SerialRx);
     Serial.println("");
-    
+
     if (Mode == MAINTENANCE)
     {
       if (strcmp((char *)SerialRx, "T_EXT_15 ON") == 0)
@@ -174,7 +145,7 @@ void loop() {
       else if (strcmp((char *)SerialRx, "T_CHEMINEE ON") == 0)
       {
         TChem = true;
-        Serial.println("Feu Cheminee allumee");
+        Serial.println("Feu Cheminee allume");
       }
       else if (strcmp((char *)SerialRx, "T_CHEMINEE OFF") == 0)
       {
@@ -236,10 +207,38 @@ void loop() {
 
   if (Mode == NORMAL)
   {
-    Text15 = TempOver(T_EXT_15);
-    Text24 = TempOver(T_EXT_24);
-    Tin22 = TempOver(T_INT_22);
-    TChem = TempOver(T_CHEMINEE);
+    bool NewText15 , NewText24, NewTin22, NewTchem;
+
+    NewText15 = TempOver(T_EXT_15);
+    if (NewText15 != Text15)
+    {
+      Text15 = NewText15;
+      if (Text15 == true)Serial.println("Temp. exterieure > 15Deg");
+      else Serial.println("Temp. exterieure < 15Deg");
+    }
+        NewText24 = TempOver(T_EXT_24);
+     if (NewText24 != Text24)
+    {
+      Text24 = NewText24;
+      if (Text24 == true)Serial.println("Temp. exterieure > 24Deg");
+      else Serial.println("Temp. exterieure < 24Deg");
+    }
+
+    NewTin22 = TempOver(T_INT_22);
+     if (NewTin22 != Tin22)
+    {
+      Tin22 = NewTin22;
+      if (Tin22 == true)Serial.println("Temp. interieure > 22Deg");
+      else Serial.println("Temp. interieure < 22Deg");
+    }
+
+    NewTchem = TempOver(T_CHEMINEE);
+         if (NewTchem != TChem)
+    {
+      TChem = NewTchem;
+      if (TChem == true)Serial.println("Feu Cheminee allume");
+      else Serial.println("Feu Cheminee eteint");
+    }
   }
 
   switch (MachineEtat) {
