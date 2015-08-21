@@ -18,9 +18,9 @@
 #define VENT_CAVE     8
 #define VENT_4        23
 #define SELECT_VMC    9
-#define V12_1         2
-#define V12_2         1
-#define V12_SEL       0    // a interchanger avec V12_IN (pour LED)
+#define V12_1         0
+#define V12_2         2
+#define V12_SEL       1    // a interchanger avec V12_IN (pour LED)
 #define V12_IN        13   // a interchanger avec V12_SEL
 
 
