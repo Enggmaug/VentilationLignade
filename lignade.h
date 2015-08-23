@@ -10,10 +10,10 @@
 #define T_EXT_24      17
 #define T_INT_22      16
 #define T_CHEMINEE    14
-#define BYPASS1_1     3
-#define BYPASS1_2     4
-#define BYPASS2_1     5
-#define BYPASS2_2     6
+#define BYPASS_1_1     3
+#define BYPASS_1_2     4
+#define BYPASS_2_1     5
+#define BYPASS_2_2     6
 #define VENT_CHEMINEE 7
 #define VENT_CAVE     8
 #define VENT_4        23
@@ -26,7 +26,7 @@
 
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
 #define ENDSTOPS 0                     //Facultatif
-#define BYPASS2 1                      //Facultatif
+#define BYPASS_1 1                      //Facultatif
 #define MONITORING_12V 0               //Facultatif
 
 /*----- Methode alternative aux blocs inhibés           -----*/
@@ -50,15 +50,15 @@
 #if ENDSTOPS
 //A Ecrire
 #else
-#define Bypass1Ouvrir() {Alim_On();digitalWrite(BYPASS1_1,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS1_1,BYPASS_DESACT);Alim_Off();}
-#define Bypass1Fermer() {Alim_On();digitalWrite(BYPASS1_2,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS1_2,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_2Ouvrir() {Alim_On();digitalWrite(BYPASS_2_1,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS_2_1,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_2Fermer() {Alim_On();digitalWrite(BYPASS_2_2,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS_2_2,BYPASS_DESACT);Alim_Off();}
 #endif
 
 #if ENDSTOPS
 //A Ecrire
 #else
-#define Bypass2Ouvrir() {Alim_On();digitalWrite(BYPASS2_1,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Double();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS2_1,BYPASS_DESACT);Alim_Off();}
-#define Bypass2Fermer() {Alim_On();digitalWrite(BYPASS2_2,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Simple();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS2_2,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_1Ouvrir() {Alim_On();digitalWrite(BYPASS_1_1,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Double();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS_1_1,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_1Fermer() {Alim_On();digitalWrite(BYPASS_1_2,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Simple();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS_1_2,BYPASS_DESACT);Alim_Off();}
 #endif
 
 //Ventilos
@@ -82,7 +82,7 @@ signed char AlimToUse = V12_1;
 #if MONITORING_12V
 #define Alim_On() { }// A ecrire
 #else
-#define Alim_On() {digitalWrite(V12_1,ALIM_ON);delay(300);}
+#define Alim_On() {digitalWrite(V12_1,ALIM_ON);delay(1000);}
 #endif
 
 

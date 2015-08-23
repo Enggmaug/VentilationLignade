@@ -43,7 +43,7 @@ void setup() {
 #if ENDSTOPS
   pinMode(ENDSTOP1_1, INPUT);
   pinMode(ENDSTOP1_2, INPUT);
-#if BYPASS2
+#if BYPASS_1
   pinMode(ENDSTOP2_1, INPUT);
   pinMode(ENDSTOP2_2, INPUT);
 #endif
@@ -56,15 +56,15 @@ void setup() {
   pinMode(T_CHEMINEE, INPUT);
 
   //Pins Bypass
-  pinMode(BYPASS1_1, OUTPUT);
-  digitalWrite(BYPASS1_1, BYPASS_DESACT);
-  pinMode(BYPASS1_2, OUTPUT);
-  digitalWrite(BYPASS1_2, BYPASS_DESACT);
-#if BYPASS2
-  pinMode(BYPASS2_1, OUTPUT);
-  digitalWrite(BYPASS2_1, BYPASS_DESACT);
-  pinMode(BYPASS2_2, OUTPUT);
-  digitalWrite(BYPASS2_2, BYPASS_DESACT);
+  pinMode(BYPASS_2_1, OUTPUT);
+  digitalWrite(BYPASS_2_1, BYPASS_DESACT);
+  pinMode(BYPASS_2_2, OUTPUT);
+  digitalWrite(BYPASS_2_2, BYPASS_DESACT);
+#if BYPASS_1
+  pinMode(BYPASS_1_1, OUTPUT);
+  digitalWrite(BYPASS_1_1, BYPASS_DESACT);
+  pinMode(BYPASS_1_2, OUTPUT);
+  digitalWrite(BYPASS_1_2, BYPASS_DESACT);
 #endif
 
   //Pins Ventilos
@@ -384,28 +384,28 @@ void loop() {
     switch (MachineEtat) {
       case STATE_1 :
         DebugMessage("Etat 1");
-        Bypass1Ouvrir(); // Puit Canadien
+        BYPASS_2Ouvrir(); // Puit Canadien
         VentiloArret(VENT_CAVE);
         VentiloArret(VENT_CHEMINEE); // Insufle Maison
 
         break;
       case STATE_2 :
         DebugMessage("Etat 2");
-        Bypass1Ouvrir(); // Puit Canadien
+        BYPASS_2Ouvrir(); // Puit Canadien
         VentiloArret(VENT_CAVE);
         VentiloMarche(VENT_CHEMINEE); // Insufle Cheminée
 
         break;
       case STATE_3 :
         DebugMessage("Etat 3");
-        Bypass1Fermer(); // Extérieur
+        BYPASS_2Fermer(); // Extérieur
         VentiloMarche(VENT_CAVE); //Puit Canadien vers cave
         VentiloArret(VENT_CHEMINEE); // Insufle Maison
 
         break;
       case STATE_4 :
         DebugMessage("Etat 4");
-        Bypass1Fermer(); // Extérieur
+        BYPASS_2Fermer(); // Extérieur
         VentiloMarche(VENT_CAVE); //Puit Canadien vers cave
         VentiloMarche(VENT_CHEMINEE); // Insufle Cheminée
 
@@ -413,11 +413,11 @@ void loop() {
       case STATE_T :
         DebugMessage("Etat Transition");
         if (!Text24) {
-          Bypass2Ouvrir();
+          BYPASS_1Fermer();
         }
         else
         {
-          Bypass1Ouvrir(); // Puit Provençal
+          BYPASS_2Ouvrir(); // Puit Provençal
           VentiloArret(VENT_CAVE);
           VentiloArret(VENT_CHEMINEE); // Insufle Maison
         }
@@ -425,13 +425,13 @@ void loop() {
         break;
       case STATE_5 :
         DebugMessage("Etat 5");
-        Bypass2Ouvrir();
+        BYPASS_1Fermer();
 
 
         break;
       case STATE_6 :
         DebugMessage("Etat 6");
-        Bypass2Fermer();
+        BYPASS_1Ouvrir();
         break;
 
       default :
