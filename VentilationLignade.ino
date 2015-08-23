@@ -9,30 +9,29 @@
 #define DebugMessage(str) {}
 #endif
 
-/*-----------------------------------------------------------*/
-/*----- Definition Machine d'Etats                      -----*/
-/*-----------------------------------------------------------*/
-enum StateMachine {
-  STATE_1,
-  STATE_2,
-  STATE_3,
-  STATE_4,
-  STATE_T,
-  STATE_5,
-  STATE_6
-} MachineEtat;
-
-bool StateChanged = true;
-
 enum Modes {
   MAINTENANCE,
   NORMAL
 } Mode;
 
-bool Text15 = THERM_ON, Text24 = THERM_ON, Tin22 = THERM_ON, TChem = THERM_ON;
-/*-----------------------------------------------------------*/
-/*----- Fonction d'initialisation                       -----*/
-/*-----------------------------------------------------------*/
+typedef struct Inputs {
+  bool InputTempOut15;
+  bool InputTempOut24;
+  bool InputTempInt22;
+  bool InputTempCheminee;
+} Inputs;
+
+typedef struct Outputs {
+  bool OutputVentiloCheminee;
+  bool EntreeAirPuit;
+  bool SortieAirDirect;
+} Outputs;
+
+struct Outputs OldOutputs;
+struct Outputs NewOutputs;
+struct Inputs OldInputs;
+struct Inputs NewInputs;
+
 void setup() {
   // si Debug autorisé, alors démarrage de la liaison serie
 #if DEBUG
@@ -84,15 +83,138 @@ void setup() {
 #endif
 
   Mode = NORMAL;
-  MachineEtat = STATE_T;
-  DebugMessage("Init");
+
+  // put your setup code here, to run once:
+  NewInputs.InputTempOut15 = true;
+  NewInputs.InputTempOut24 = true;
+  NewInputs.InputTempInt22 = true;
+  NewInputs.InputTempCheminee = true;
+  OldInputs = NewInputs;
+
+  NewOutputs.OutputVentiloCheminee = true;
+  NewOutputs.EntreeAirPuit = true;
+  NewOutputs.SortieAirDirect = true;
+  OldOutputs = NewOutputs;
+
 }
-/*-----------------------------------------------------------*/
-/*----- Machine d'états                                 -----*/
-/*-----------------------------------------------------------*/
+
 void loop() {
+  bool InputsChanged;
+  InputsChanged = GetInputs();
+
+  if (InputsChanged == true)
+  {
+    char InputsCalc;
+    //Construction de la valeur de switch
+    InputsCalc = 0;
+    InputsCalc = (char) NewInputs.InputTempOut15;
+    InputsCalc = InputsCalc << 1;
+    InputsCalc = (char) NewInputs.InputTempOut24;
+    InputsCalc = InputsCalc << 1;
+    InputsCalc = (char) NewInputs.InputTempInt22;
+    InputsCalc = InputsCalc << 1;
+    InputsCalc = (char) NewInputs.InputTempCheminee;
+    InputsCalc = InputsCalc << 1;
+
+    //Gestion des états
+    switch (InputsCalc) {
+      /* ETATS 1 et 5 */
+      case 0x00 : // TExt Froide - TInt < 22°C - Cheminee Eteinte
+      case 0x02 : // TExt Froide - TInt > 22°C - Cheminee Eteinte
+      case 0x0C : // TExt Chaude - TInt < 22°C - Cheminee Eteinte
+      case 0x0D : // TExt Chaude - TInt < 22°C - Cheminee Allumée
+      case 0x04 : // TExt Error  - TInt < 22°C - Cheminee Eteinte
+      case 0x06 : // TExt Error  - TInt > 22°C - Cheminee Eteinte
+        NewOutputs.OutputVentiloCheminee = false;
+        NewOutputs.SortieAirDirect = false;
+        NewOutputs.EntreeAirPuit = true;
+        break;
+      /*ETAT 2*/
+      case 0x01 : // TExt Froide - TInt < 22°C - Cheminee Allumée
+      case 0x03 : // TExt Froide - TInt > 22°C - Cheminee Allumée
+      case 0x05 : // TExt Error  - TInt < 22°C - Cheminee Allumée
+      case 0x07 : // TExt Error  - TInt > 22°C - Cheminee Allumée
+        NewOutputs.OutputVentiloCheminee = true;
+        NewOutputs.SortieAirDirect = false;
+        NewOutputs.EntreeAirPuit = true;
+        break;
+      /*ETAT 3*/
+      case 0x08 : // TExt Douce  - TInt < 22°C - Cheminee Eteinte
+      case 0x0A : // TExt Douce  - TInt > 22°C - Cheminee Eteinte
+        NewOutputs.OutputVentiloCheminee = false;
+        NewOutputs.SortieAirDirect = false;
+        NewOutputs.EntreeAirPuit = false;
+        break;
+      /*ETAT 4*/
+      case 0x09 : // TExt Douce  - TInt < 22°C - Cheminee Allumée
+      case 0x0B : // TExt Douce  - TInt > 22°C - Cheminee Allumée
+        NewOutputs.OutputVentiloCheminee = true;
+        NewOutputs.SortieAirDirect = false;
+        NewOutputs.EntreeAirPuit = false;
+        break;
+      /*ETAT 6*/
+      case 0x0E : // TExt Chaude - TInt > 22°C - Cheminee Eteinte
+      case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée
+        NewOutputs.OutputVentiloCheminee = false;
+        NewOutputs.SortieAirDirect = true;
+        NewOutputs.EntreeAirPuit = true;
+        break;
+      default :
+        break;
+    }
+
+    //Gestion des sorties
+    //Cheminée
+    if (NewOutputs.OutputVentiloCheminee != OldOutputs.OutputVentiloCheminee)
+    {
+      if (NewOutputs.OutputVentiloCheminee == false)
+      {
+        VentiloArret(VENT_CHEMINEE);
+      }
+      else
+      {
+        VentiloMarche(VENT_CHEMINEE);
+      }
+    }
+    //Bypass1
+    if (NewOutputs.SortieAirDirect != OldOutputs.SortieAirDirect)
+    {
+      if (NewOutputs.SortieAirDirect == false)
+      {
+        BYPASS_1Ouvrir();
+
+      }
+      else
+      {
+        BYPASS_1Fermer();
+      }
+    }
+    //Bypass2
+    if (NewOutputs.EntreeAirPuit != OldOutputs.EntreeAirPuit)
+    {
+      if (NewOutputs.EntreeAirPuit == false)
+      {
+        VentiloArret(VENT_CAVE);
+        BYPASS_2Ouvrir();
+      }
+      else
+      {
+        BYPASS_2Fermer();
+        VentiloMarche(VENT_CAVE);
+      }
+    }
+  }
+}
+
+
+/*********************************************************************************/
+/*                   RECCUPERATION DES INPUTS                                    */
+/*********************************************************************************/
+bool GetInputs() {
+  bool InputsChanged;
   byte SerialRx[80];
   int rd;
+
   rd = Serial.available();
   if (rd > 0)
   {
@@ -103,53 +225,53 @@ void loop() {
 
     if (Mode == MAINTENANCE)
     {
-      if (strcmp((char *)SerialRx, "T_EXT_15 ON") == 0)
+      if (strncmp((char *)SerialRx, "T_EXT_15 ON", 11) == 0)
       {
-        Text15 = true;
-        if (Text24)
+        NewInputs.InputTempOut15 = true;
+        if (NewInputs.InputTempOut24)
           Serial.println("Temp. exterieure > 24Deg");
         else
           Serial.println("Temp. exterieure entre 15 et 24Deg");
       }
-      else if (strcmp((char *)SerialRx, "T_EXT_15 OFF") == 0)
+      else if (strncmp((char *)SerialRx, "T_EXT_15 OFF", 12) == 0)
       {
-        Text15 = false;
-        Text24 = false;
+        NewInputs.InputTempOut15 = false;
+        NewInputs.InputTempOut24 = false;
         Serial.println("Temp. exterieure < 15Deg");
       }
-      else if (strcmp((char *)SerialRx, "T_EXT_24 ON") == 0)
+      else if (strncmp((char *)SerialRx, "T_EXT_24 ON", 11) == 0)
       {
-        Text24 = true;
-        Text15 = true;
+        NewInputs.InputTempOut24 = true;
+        NewInputs.InputTempOut15 = true;
         Serial.println("Temp. exterieure > 24Deg");
       }
-      else if (strcmp((char *)SerialRx, "T_EXT_24 OFF") == 0)
+      else if (strncmp((char *)SerialRx, "T_EXT_24 OFF", 12) == 0)
       {
-        Text24 = false;
-        if (Text15)
+        NewInputs.InputTempOut24 = false;
+        if (NewInputs.InputTempOut15)
           Serial.println("Temp. exterieure entre 15 et 24Deg");
         else
           Serial.println("Temp. exterieure < 15Deg");
 
       }
-      else if (strcmp((char *)SerialRx, "T_INT_22 ON") == 0)
+      else if (strncmp((char *)SerialRx, "T_INT_22 ON", 11) == 0)
       {
-        Tin22 = true;
+        NewInputs.InputTempInt22 = true;
         Serial.println("Temp. interieure > 22Deg");
       }
-      else if (strcmp((char *)SerialRx, "T_INT_22 OFF") == 0)
+      else if (strncmp((char *)SerialRx, "T_INT_22 OFF", 12) == 0)
       {
-        Tin22 = false;
+        NewInputs.InputTempInt22 = false;
         Serial.println("Temp. interieure < 22Deg");
       }
-      else if (strcmp((char *)SerialRx, "T_CHEMINEE ON") == 0)
+      else if (strncmp((char *)SerialRx, "T_CHEMINEE ON", 13) == 0)
       {
-        TChem = true;
+        NewInputs.InputTempCheminee = true;
         Serial.println("Feu Cheminee allume");
       }
-      else if (strcmp((char *)SerialRx, "T_CHEMINEE OFF") == 0)
+      else if (strncmp((char *)SerialRx, "T_CHEMINEE OFF", 14) == 0)
       {
-        TChem = false;
+        NewInputs.InputTempCheminee = false;
         Serial.println("Feu Cheminee eteint");
       }
       else
@@ -158,43 +280,15 @@ void loop() {
         Serial.println("Utiliser : THERMOSTAT ETAT");
         Serial.println("    Avec : THERMOSTAT = T_EXT_15 / T_EXT_24 / T_INT_22 / T_CHEMINEE");
         Serial.println("           ETAT       = ON / OFF");
-        Serial.println("");
-        Serial.println("Etat courant : ");
-        switch (MachineEtat)
-        {
-          case STATE_1 :
-            Serial.println("               Etat 1");
-            break;
-          case STATE_2 :
-            Serial.println("               Etat 2");
-            break;
-          case STATE_3 :
-            Serial.println("               Etat 3");
-            break;
-          case STATE_4 :
-            Serial.println("               Etat 4");
-            break;
-          case STATE_T :
-            Serial.println("               Etat Transition");
-            break;
-          case STATE_5 :
-            Serial.println("               Etat 5");
-            break;
-          case STATE_6 :
-            Serial.println("               Etat 6");
-            break;
-          default : Serial.println("Erreur - Etat inconnu");
-            break;
-        }
       }
 
     }
-    if (strcmp((char *)SerialRx, "MAINT") == 0)
+    if (strncmp((char *)SerialRx, "MAINT", 5) == 0)
     {
       Mode = MAINTENANCE;
       Serial.println("Entree Mode Maintenance");
     }
-    else if (strcmp((char *)SerialRx, "NORM") == 0)
+    else if (strncmp((char *)SerialRx, "NORM", 4) == 0)
     {
       Mode = NORMAL;
       Serial.println("Sortie Mode Maintenance");
@@ -207,237 +301,17 @@ void loop() {
 
   if (Mode == NORMAL)
   {
-    bool NewText15 , NewText24, NewTin22, NewTchem;
-
-    NewText15 = TempOver(T_EXT_15);
-    if (NewText15 != Text15)
-    {
-      Text15 = NewText15;
-      if (Text15 == true)Serial.println("Temp. exterieure > 15Deg");
-      else Serial.println("Temp. exterieure < 15Deg");
-    }
-        NewText24 = TempOver(T_EXT_24);
-     if (NewText24 != Text24)
-    {
-      Text24 = NewText24;
-      if (Text24 == true)Serial.println("Temp. exterieure > 24Deg");
-      else Serial.println("Temp. exterieure < 24Deg");
-    }
-
-    NewTin22 = TempOver(T_INT_22);
-     if (NewTin22 != Tin22)
-    {
-      Tin22 = NewTin22;
-      if (Tin22 == true)Serial.println("Temp. interieure > 22Deg");
-      else Serial.println("Temp. interieure < 22Deg");
-    }
-
-    NewTchem = TempOver(T_CHEMINEE);
-         if (NewTchem != TChem)
-    {
-      TChem = NewTchem;
-      if (TChem == true)Serial.println("Feu Cheminee allume");
-      else Serial.println("Feu Cheminee eteint");
-    }
+    NewInputs.InputTempOut15 = TempOver(T_EXT_15);
+    NewInputs.InputTempOut24 = TempOver(T_EXT_24);
+    NewInputs.InputTempInt22 = TempOver(T_INT_22);
+    NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
   }
 
-  switch (MachineEtat) {
-    case STATE_1 :
-      if (TChem)
-      {
-        MachineEtat = STATE_2;
-        StateChanged = true;
-      }
-      else if (Text15)
-      {
-        MachineEtat = STATE_3;
-        StateChanged = true;
-      }
-      break;
-    case STATE_2 :
-      if (!TChem)
-      {
-        MachineEtat = STATE_1;
-        StateChanged = true;
-      }
-      else if (Text15)
-      {
-        MachineEtat = STATE_4;
-        StateChanged = true;
-      }
-      break;
-    case STATE_3 :
-      if (Text24)
-      {
-        MachineEtat = STATE_T;
-        StateChanged = true;
-      }
-      else if (TChem)
-      {
-        MachineEtat = STATE_4;
-        StateChanged = true;
-      }
-      else if (!Text15)
-      {
-        MachineEtat = STATE_1;
-        StateChanged = true;
-      }
-      break;
-    case STATE_4 :
-      if (Text24)
-      {
-        MachineEtat = STATE_T;
-        StateChanged = true;
-      }
-      else if (!TChem)
-      {
-        MachineEtat = STATE_3;
-        StateChanged = true;
-      }
-      else if (!Text15)
-      {
-        MachineEtat = STATE_2;
-        StateChanged = true;
-      }
-      break;
-    case STATE_5 :
-      if (Tin22)
-      {
-        MachineEtat = STATE_6;
-        StateChanged = true;
-      }
-      else if (!Text24)
-      {
-        MachineEtat = STATE_T;
-        StateChanged = true;
-      }
-      break;
-    case STATE_6 :
-      if (!Tin22)
-      {
-        MachineEtat = STATE_5;
-        StateChanged = true;
-      }
-      else if (!Text24)
-      {
-        MachineEtat = STATE_T;
-        StateChanged = true;
-      }
-      break;
-    case STATE_T :
-      if (Text24)
-      {
-        if (Tin22)
-        {
-          MachineEtat = STATE_6;
-          StateChanged = true;
-        }
-        else
-        {
-          MachineEtat = STATE_5;
-          StateChanged = true;
-        }
-      }
-      else
-      {
-        if (TChem)
-        {
-          MachineEtat = STATE_4;
-          StateChanged = true;
-        }
-        else
-        {
-          MachineEtat = STATE_3;
-          StateChanged = true;
-        }
-      }
-      break;
-    default :
-      if (Text15)
-      {
-        MachineEtat = STATE_T;
-        StateChanged = true;
-      }
-      else
-      {
-        if (TChem)
-        {
-          MachineEtat = STATE_1;
-          StateChanged = true;
-        }
-        else
-        {
-          MachineEtat = STATE_2;
-          StateChanged = true;
-        }
-      }
-      break;
-  }
+  InputsChanged = (NewInputs.InputTempOut15 & OldInputs.InputTempOut15);
+  InputsChanged = InputsChanged | (NewInputs.InputTempOut24 & OldInputs.InputTempOut24);
+  InputsChanged = InputsChanged | (NewInputs.InputTempInt22 & OldInputs.InputTempInt22);
+  InputsChanged = InputsChanged | (NewInputs.InputTempCheminee & OldInputs.InputTempCheminee);
+  return InputsChanged;
 
-  if (StateChanged == true)
-  {
-    StateChanged = false;
-    VentiloArret(VENT_4);
-    VentiloArret(VENT_CAVE);
-    VentiloArret(VENT_CHEMINEE);
-
-    switch (MachineEtat) {
-      case STATE_1 :
-        DebugMessage("Etat 1");
-        BYPASS_2Ouvrir(); // Puit Canadien
-        VentiloArret(VENT_CAVE);
-        VentiloArret(VENT_CHEMINEE); // Insufle Maison
-
-        break;
-      case STATE_2 :
-        DebugMessage("Etat 2");
-        BYPASS_2Ouvrir(); // Puit Canadien
-        VentiloArret(VENT_CAVE);
-        VentiloMarche(VENT_CHEMINEE); // Insufle Cheminée
-
-        break;
-      case STATE_3 :
-        DebugMessage("Etat 3");
-        BYPASS_2Fermer(); // Extérieur
-        VentiloMarche(VENT_CAVE); //Puit Canadien vers cave
-        VentiloArret(VENT_CHEMINEE); // Insufle Maison
-
-        break;
-      case STATE_4 :
-        DebugMessage("Etat 4");
-        BYPASS_2Fermer(); // Extérieur
-        VentiloMarche(VENT_CAVE); //Puit Canadien vers cave
-        VentiloMarche(VENT_CHEMINEE); // Insufle Cheminée
-
-        break;
-      case STATE_T :
-        DebugMessage("Etat Transition");
-        if (!Text24) {
-          BYPASS_1Fermer();
-        }
-        else
-        {
-          BYPASS_2Ouvrir(); // Puit Provençal
-          VentiloArret(VENT_CAVE);
-          VentiloArret(VENT_CHEMINEE); // Insufle Maison
-        }
-
-        break;
-      case STATE_5 :
-        DebugMessage("Etat 5");
-        BYPASS_1Fermer();
-
-
-        break;
-      case STATE_6 :
-        DebugMessage("Etat 6");
-        BYPASS_1Ouvrir();
-        break;
-
-      default :
-        MachineEtat = STATE_1;
-        StateChanged = true;
-        break;
-    }
-  }
 }
+

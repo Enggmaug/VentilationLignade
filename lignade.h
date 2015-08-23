@@ -26,7 +26,6 @@
 
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
 #define ENDSTOPS 0                     //Facultatif
-#define BYPASS_1 1                      //Facultatif
 #define MONITORING_12V 0               //Facultatif
 
 /*----- Methode alternative aux blocs inhibés           -----*/
