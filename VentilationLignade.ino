@@ -32,12 +32,13 @@ struct Outputs NewOutputs;
 struct Inputs OldInputs;
 struct Inputs NewInputs;
 
+bool FirstLoop;
+
 void setup() {
   // si Debug autorisé, alors démarrage de la liaison serie
 #if DEBUG
   Serial.begin(38400);
 #endif
-  delay(5000);
   // Pins EndStops
 #if ENDSTOPS
   pinMode(ENDSTOP1_1, INPUT);
@@ -59,20 +60,20 @@ void setup() {
   digitalWrite(BYPASS_2_1, BYPASS_DESACT);
   pinMode(BYPASS_2_2, OUTPUT);
   digitalWrite(BYPASS_2_2, BYPASS_DESACT);
-#if BYPASS_1
   pinMode(BYPASS_1_1, OUTPUT);
   digitalWrite(BYPASS_1_1, BYPASS_DESACT);
   pinMode(BYPASS_1_2, OUTPUT);
   digitalWrite(BYPASS_1_2, BYPASS_DESACT);
-#endif
 
   //Pins Ventilos
   pinMode(VENT_CHEMINEE, OUTPUT);
+  VentiloArret(VENT_CHEMINEE);
   pinMode(VENT_CAVE, OUTPUT);
-  pinMode(VENT_4, OUTPUT);
+  VentiloArret(VENT_CAVE);
 
   //Pin VMC
   pinMode(SELECT_VMC, OUTPUT);
+  VMC_Double();
 
   //Pins Monitoring 12V
   pinMode(V12_1, OUTPUT);
@@ -82,39 +83,36 @@ void setup() {
   pinMode(V12_IN, INPUT);
 #endif
 
+  Alim_Off();
+
   Mode = NORMAL;
 
-  // put your setup code here, to run once:
   NewInputs.InputTempOut15 = true;
   NewInputs.InputTempOut24 = true;
   NewInputs.InputTempInt22 = true;
   NewInputs.InputTempCheminee = true;
   OldInputs = NewInputs;
 
-  NewOutputs.OutputVentiloCheminee = true;
-  NewOutputs.EntreeAirPuit = true;
-  NewOutputs.SortieAirDirect = true;
-  OldOutputs = NewOutputs;
-
+  FirstLoop = true;
+  delay(2000);
 }
 
 void loop() {
   bool InputsChanged;
   InputsChanged = GetInputs();
 
-  if (InputsChanged == true)
+  if ((FirstLoop == true) or (InputsChanged == true))
   {
     char InputsCalc;
     //Construction de la valeur de switch
     InputsCalc = 0;
     InputsCalc = (char) NewInputs.InputTempOut15;
     InputsCalc = InputsCalc << 1;
-    InputsCalc = (char) NewInputs.InputTempOut24;
+    InputsCalc = InputsCalc + (char) NewInputs.InputTempOut24;
     InputsCalc = InputsCalc << 1;
-    InputsCalc = (char) NewInputs.InputTempInt22;
+    InputsCalc = InputsCalc + (char) NewInputs.InputTempInt22;
     InputsCalc = InputsCalc << 1;
-    InputsCalc = (char) NewInputs.InputTempCheminee;
-    InputsCalc = InputsCalc << 1;
+    InputsCalc = InputsCalc + (char) NewInputs.InputTempCheminee;
 
     //Gestion des états
     switch (InputsCalc) {
@@ -125,6 +123,7 @@ void loop() {
       case 0x0D : // TExt Chaude - TInt < 22°C - Cheminee Allumée
       case 0x04 : // TExt Error  - TInt < 22°C - Cheminee Eteinte
       case 0x06 : // TExt Error  - TInt > 22°C - Cheminee Eteinte
+        Serial.println("ETATS 1 OU 5");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = true;
@@ -134,6 +133,7 @@ void loop() {
       case 0x03 : // TExt Froide - TInt > 22°C - Cheminee Allumée
       case 0x05 : // TExt Error  - TInt < 22°C - Cheminee Allumée
       case 0x07 : // TExt Error  - TInt > 22°C - Cheminee Allumée
+        Serial.println("ETAT 2");
         NewOutputs.OutputVentiloCheminee = true;
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = true;
@@ -141,6 +141,7 @@ void loop() {
       /*ETAT 3*/
       case 0x08 : // TExt Douce  - TInt < 22°C - Cheminee Eteinte
       case 0x0A : // TExt Douce  - TInt > 22°C - Cheminee Eteinte
+        Serial.println("ETAT 3");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = false;
@@ -148,6 +149,7 @@ void loop() {
       /*ETAT 4*/
       case 0x09 : // TExt Douce  - TInt < 22°C - Cheminee Allumée
       case 0x0B : // TExt Douce  - TInt > 22°C - Cheminee Allumée
+        Serial.println("ETAT 4");
         NewOutputs.OutputVentiloCheminee = true;
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = false;
@@ -155,6 +157,7 @@ void loop() {
       /*ETAT 6*/
       case 0x0E : // TExt Chaude - TInt > 22°C - Cheminee Eteinte
       case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée
+        Serial.println("ETAT 6");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = true;
         NewOutputs.EntreeAirPuit = true;
@@ -164,6 +167,14 @@ void loop() {
     }
 
     //Gestion des sorties
+    if (FirstLoop == true) //Premier Passage : Toutes sorties réinitialisées.
+    {
+      Serial.println("FirstLoop ! ");
+      OldOutputs.OutputVentiloCheminee = ! NewOutputs.OutputVentiloCheminee;
+      OldOutputs.SortieAirDirect = ! NewOutputs.SortieAirDirect;
+      OldOutputs.EntreeAirPuit = ! NewOutputs.EntreeAirPuit;
+    }
+    FirstLoop = false;
     //Cheminée
     if (NewOutputs.OutputVentiloCheminee != OldOutputs.OutputVentiloCheminee)
     {
@@ -181,12 +192,11 @@ void loop() {
     {
       if (NewOutputs.SortieAirDirect == false)
       {
-        BYPASS_1Ouvrir();
-
+        BYPASS_1Fermer();
       }
       else
       {
-        BYPASS_1Fermer();
+        BYPASS_1Ouvrir();
       }
     }
     //Bypass2
@@ -194,15 +204,16 @@ void loop() {
     {
       if (NewOutputs.EntreeAirPuit == false)
       {
-        VentiloArret(VENT_CAVE);
-        BYPASS_2Ouvrir();
+        VentiloMarche(VENT_CAVE);
+        BYPASS_2Fermer();
       }
       else
       {
-        BYPASS_2Fermer();
-        VentiloMarche(VENT_CAVE);
+        BYPASS_2Ouvrir();
+        VentiloArret(VENT_CAVE);
       }
     }
+    OldOutputs = NewOutputs;
   }
 }
 
@@ -283,6 +294,13 @@ bool GetInputs() {
       }
 
     }
+    else
+    {
+      NewInputs.InputTempOut15 = TempOver(T_EXT_15);
+      NewInputs.InputTempOut24 = TempOver(T_EXT_24);
+      NewInputs.InputTempInt22 = TempOver(T_INT_22);
+      NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
+    }
     if (strncmp((char *)SerialRx, "MAINT", 5) == 0)
     {
       Mode = MAINTENANCE;
@@ -299,18 +317,12 @@ bool GetInputs() {
     }
   }
 
-  if (Mode == NORMAL)
-  {
-    NewInputs.InputTempOut15 = TempOver(T_EXT_15);
-    NewInputs.InputTempOut24 = TempOver(T_EXT_24);
-    NewInputs.InputTempInt22 = TempOver(T_INT_22);
-    NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
-  }
+  InputsChanged = (NewInputs.InputTempOut15 ^ OldInputs.InputTempOut15);
+  InputsChanged = InputsChanged | (NewInputs.InputTempOut24 ^ OldInputs.InputTempOut24);
+  InputsChanged = InputsChanged | (NewInputs.InputTempInt22 ^ OldInputs.InputTempInt22);
+  InputsChanged = InputsChanged | (NewInputs.InputTempCheminee ^ OldInputs.InputTempCheminee);
+  OldInputs = NewInputs;
 
-  InputsChanged = (NewInputs.InputTempOut15 & OldInputs.InputTempOut15);
-  InputsChanged = InputsChanged | (NewInputs.InputTempOut24 & OldInputs.InputTempOut24);
-  InputsChanged = InputsChanged | (NewInputs.InputTempInt22 & OldInputs.InputTempInt22);
-  InputsChanged = InputsChanged | (NewInputs.InputTempCheminee & OldInputs.InputTempCheminee);
   return InputsChanged;
 
 }
