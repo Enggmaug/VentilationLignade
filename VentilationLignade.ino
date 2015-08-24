@@ -123,7 +123,7 @@ void loop() {
       case 0x0D : // TExt Chaude - TInt < 22°C - Cheminee Allumée
       case 0x04 : // TExt Error  - TInt < 22°C - Cheminee Eteinte
       case 0x06 : // TExt Error  - TInt > 22°C - Cheminee Eteinte
-        Serial.println("ETATS 1 OU 5");
+        Serial.println("ETATS 1");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = true;
@@ -157,7 +157,7 @@ void loop() {
       /*ETAT 6*/
       case 0x0E : // TExt Chaude - TInt > 22°C - Cheminee Eteinte
       case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée
-        Serial.println("ETAT 6");
+        Serial.println("ETAT 5");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = true;
         NewOutputs.EntreeAirPuit = true;
