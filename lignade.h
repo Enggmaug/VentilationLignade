@@ -30,10 +30,7 @@
 
 /*----- Methode alternative aux blocs inhibés           -----*/
 //Thermostats
-#define THERM_ON HIGH
-#define THERM_OFF LOW
-
-#define TempOver(Thermostat) digitalRead(Thermostat)
+#define TempOver(Thermostat) not(digitalRead(Thermostat))
 
 //EndStops
 #define ENDSTOP_OPEN HIGH
