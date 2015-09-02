@@ -1,4 +1,7 @@
 #include "lignade.h"
+#include "SPI.h"
+#include "Adafruit_GFX.h"
+#include "Adafruit_ILI9340.h"
 
 /*----- Autorise/Inhibe les messages sur le serial port -----*/
 #define DEBUG 1
@@ -8,6 +11,17 @@
 #else
 #define DebugMessage(str) {}
 #endif
+
+/*----- Ajout pour affichage ILI9340                    -----*/
+#define _sclk SPI_SCK
+#define _miso SPI_MISO
+#define _mosi SPI_MOSI
+#define _cs TFT_CS
+#define _dc TFT_DC
+#define _rst 8 // A voir
+
+// Use hardware SPI
+Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);
 
 enum Modes {
   MAINTENANCE,
@@ -94,7 +108,9 @@ void setup() {
   OldInputs = NewInputs;
 
   FirstLoop = true;
-  delay(2000);
+
+// Mise en route de l'affichage
+    tft.begin();
 }
 
 void loop() {
@@ -215,6 +231,9 @@ void loop() {
     }
     OldOutputs = NewOutputs;
   }
+
+//Affichage de Test
+testFilledCircles(10, ILI9340_MAGENTA);
 }
 
 
@@ -325,5 +344,23 @@ bool GetInputs() {
 
   return InputsChanged;
 
+}
+
+/*********************************************************************************/
+/* FONCTION POUR TEST ************************************************************/
+/*********************************************************************************/
+unsigned long testFilledCircles(uint8_t radius, uint16_t color) {
+  unsigned long start;
+  int x, y, w = tft.width(), h = tft.height(), r2 = radius * 2;
+
+  tft.fillScreen(ILI9340_BLACK);
+  start = micros();
+  for(x=radius; x<w; x+=r2) {
+    for(y=radius; y<h; y+=r2) {
+      tft.fillCircle(x, y, radius, color);
+    }
+  }
+
+  return micros() - start;
 }
 

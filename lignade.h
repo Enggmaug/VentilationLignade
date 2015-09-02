@@ -11,13 +11,13 @@
 #define BYPASS_2_2     6
 //#define SPARE          7
 //#define SPARE          8
-#define SDCARD_CS      9
+#define SDCARD_CS     15
 #define TFT_CS        10
 #define SPI_MOSI      11
 #define SPI_MISO      12
 #define SPI_SCK       13
 #define T_CHEMINEE    14
-#define TFT_DC        15
+#define TFT_DC        9
 #define T_INT_22      16
 #define T_EXT_24      17
 #define T_EXT_15      18
