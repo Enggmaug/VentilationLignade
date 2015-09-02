@@ -2,27 +2,40 @@
 #define TEMPS_BYPASS 30000//Temps de fermeture/ouverture d'un Bypass
 
 /*----- Utilisation des Pins IO                         -----*/
-#define ENDSTOP1_1    22
-#define ENDSTOP1_2    21
-#define ENDSTOP2_1    20
-#define ENDSTOP2_2    19
-#define T_EXT_15      18
-#define T_EXT_24      17
-#define T_INT_22      16
-#define T_CHEMINEE    14
+//#define SPARE          0
+//#define SPARE          1
+//#define SPARE          2
 #define BYPASS_1_1     3
 #define BYPASS_1_2     4
 #define BYPASS_2_1     5
 #define BYPASS_2_2     6
-#define VENT_CHEMINEE 7
-#define VENT_CAVE     8
-#define VENT_4        23
-#define SELECT_VMC    9
-#define V12_1         0
-#define V12_2         2
-#define V12_SEL       1    // a interchanger avec V12_IN (pour LED)
-#define V12_IN        13   // a interchanger avec V12_SEL
+//#define SPARE          7
+//#define SPARE          8
+#define SDCARD_CS      9
+#define TFT_CS        10
+#define SPI_MOSI      11
+#define SPI_MISO      12
+#define SPI_SCK       13
+#define T_CHEMINEE    14
+#define TFT_DC        15
+#define T_INT_22      16
+#define T_EXT_24      17
+#define T_EXT_15      18
+#define ENDSTOP2_2    19
+#define ENDSTOP2_1    20
+#define ENDSTOP1_2    21
+#define ENDSTOP1_1    22
+//#define SPARE         23
 
+#define I2C           0x01
+#define VENT_SPARE    I2C << 7
+#define VENT_CHEMINEE 14 //I2C << 6
+#define VENT_CAVE     8  //I2C << 5
+#define SELECT_VMC    9  //I2C << 4
+#define V12_1         0  //I2C << 3
+#define V12_2         I2C << 2
+#define V12_SEL       I2C << 1
+#define V12_IN        I2C << 0
 
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
 #define ENDSTOPS 0                     //Facultatif
