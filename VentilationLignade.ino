@@ -109,16 +109,22 @@ void setup() {
 
   FirstLoop = true;
 
-// Mise en route de l'affichage
-    tft.begin();
+  // Mise en route de l'affichage
+  tft.begin();
+
+  tft.setRotation(3);
+  tft.fillScreen(ILI9340_BLACK);
 }
 
 void loop() {
   bool InputsChanged;
+  bool RefreshScreen =false;
   InputsChanged = GetInputs();
 
   if ((FirstLoop == true) or (InputsChanged == true))
   {
+    RefreshScreen = true;
+    
     char InputsCalc;
     //Construction de la valeur de switch
     InputsCalc = 0;
@@ -232,8 +238,11 @@ void loop() {
     OldOutputs = NewOutputs;
   }
 
-//Affichage de Test
-testFilledCircles(10, ILI9340_MAGENTA);
+  // Affichage de l'écran
+  if (RefreshScreen == true)
+  {
+  DisplayScreen();
+  }
 }
 
 
@@ -349,18 +358,87 @@ bool GetInputs() {
 /*********************************************************************************/
 /* FONCTION POUR TEST ************************************************************/
 /*********************************************************************************/
-unsigned long testFilledCircles(uint8_t radius, uint16_t color) {
+void DisplayScreen(void)
+{
+  int color;
+
+  //Rectangle Exterieur
+  color = 0x4208;
+  tft.fillRect(0, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
+
+  // Rectangle Intérieur
+  color = 0xF800;
+  tft.fillRect(tft.width() / 3 + 1, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
+
+  // Rectangle Cheminée
+  color = 0x001F;
+  tft.fillRect(2 * tft.width() / 3 + 1, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
+
+  //Text Extérieur
+  tft.setCursor(20, 10);
+  tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
+  tft.println("Ext :");
+  tft.setTextSize(1);
+  tft.setCursor(20, 10 + (tft.height() / 7));
+  tft.print("B");
+  tft.print(" - "); tft.setTextSize(2);
+  tft.print("M"); tft.setTextSize(1);
+  tft.print(" - ");
+  tft.print("H");
+
+  //Texte Intérieur
+  tft.setCursor(tft.width() / 3 + 1 + 20, 10);
+  tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
+  tft.println("Int :");
+  tft.setCursor(tft.width() / 3 + 1 + 20, 10 + (tft.height() / 7));
+  tft.print("Chaud");
+
+  //Texte cheminée
+  tft.setCursor(2 * tft.width() / 3 + 1 + 20, 10);
+  tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
+  tft.println("Chem :");
+  tft.setCursor(2 * tft.width() / 3 + 1 + 20, 10 + (tft.height() / 7));
+  tft.print("Arret");
+}
+
+
+unsigned long testText() {
+  tft.fillScreen(ILI9340_BLACK);
+  tft.setCursor(0, 0);
+  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(1);
+  tft.println("Hello World!");
+  tft.setTextColor(ILI9340_YELLOW); tft.setTextSize(2);
+  tft.println(1234.56);
+  tft.setTextColor(ILI9340_RED);    tft.setTextSize(3);
+  tft.println(0xDEADBEEF, HEX);
+  tft.println();
+  tft.setTextColor(ILI9340_GREEN);
+  tft.setTextSize(5);
+  tft.println("Groop");
+  tft.setTextSize(2);
+  tft.println("I implore thee,");
+  tft.setTextSize(1);
+  tft.println("my foonting turlingdromes.");
+  tft.println("And hooptiously drangle me");
+  tft.println("with crinkly bindlewurdles,");
+  tft.println("Or I will rend thee");
+  tft.println("in the gobberwarts");
+  tft.println("with my blurglecruncheon,");
+  tft.println("see if I don't!");
+}
+
+unsigned long testRects(uint16_t color) {
   unsigned long start;
-  int x, y, w = tft.width(), h = tft.height(), r2 = radius * 2;
+  int           n, i, i2,
+                cx = tft.width()  / 2,
+                cy = tft.height() / 2;
 
   tft.fillScreen(ILI9340_BLACK);
+  n     = min(tft.width(), tft.height());
   start = micros();
-  for(x=radius; x<w; x+=r2) {
-    for(y=radius; y<h; y+=r2) {
-      tft.fillCircle(x, y, radius, color);
-    }
+  for (i = 2; i < n; i += 6) {
+    i2 = i / 2;
+    tft.drawRect(cx - i2, cy - i2, i, i, color);
   }
-
-  return micros() - start;
 }
 
