@@ -101,10 +101,10 @@ void setup() {
 
   Mode = NORMAL;
 
-  NewInputs.InputTempOut15 = true;
-  NewInputs.InputTempOut24 = true;
-  NewInputs.InputTempInt22 = true;
-  NewInputs.InputTempCheminee = true;
+  NewInputs.InputTempOut15 = TempOver(T_EXT_15);
+  NewInputs.InputTempOut24 = TempOver(T_EXT_24);
+  NewInputs.InputTempInt22 = TempOver(T_INT_22);
+  NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
   OldInputs = NewInputs;
 
   FirstLoop = true;
@@ -138,14 +138,13 @@ void loop() {
 
     //Gestion des états
     switch (InputsCalc) {
-      /* ETATS 1 et 5 */
+      /* ETAT 1*/
       case 0x00 : // TExt Froide - TInt < 22°C - Cheminee Eteinte
       case 0x02 : // TExt Froide - TInt > 22°C - Cheminee Eteinte
       case 0x0C : // TExt Chaude - TInt < 22°C - Cheminee Eteinte
       case 0x0D : // TExt Chaude - TInt < 22°C - Cheminee Allumée
       case 0x04 : // TExt Error  - TInt < 22°C - Cheminee Eteinte
-      case 0x06 : // TExt Error  - TInt > 22°C - Cheminee Eteinte
-        Serial.println("ETATS 1");
+        Serial.println("ETAT 1");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = true;
@@ -154,7 +153,6 @@ void loop() {
       case 0x01 : // TExt Froide - TInt < 22°C - Cheminee Allumée
       case 0x03 : // TExt Froide - TInt > 22°C - Cheminee Allumée
       case 0x05 : // TExt Error  - TInt < 22°C - Cheminee Allumée
-      case 0x07 : // TExt Error  - TInt > 22°C - Cheminee Allumée
         Serial.println("ETAT 2");
         NewOutputs.OutputVentiloCheminee = true;
         NewOutputs.SortieAirDirect = false;
@@ -178,7 +176,9 @@ void loop() {
         break;
       /*ETAT 6*/
       case 0x0E : // TExt Chaude - TInt > 22°C - Cheminee Eteinte
-      case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée
+      case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée      
+      case 0x06 : // TExt Error  - TInt > 22°C - Cheminee Eteinte
+      case 0x07 : // TExt Error  - TInt > 22°C - Cheminee Allumée
         Serial.println("ETAT 5");
         NewOutputs.OutputVentiloCheminee = false;
         NewOutputs.SortieAirDirect = true;
@@ -322,13 +322,7 @@ bool GetInputs() {
       }
 
     }
-    else
-    {
-      NewInputs.InputTempOut15 = TempOver(T_EXT_15);
-      NewInputs.InputTempOut24 = TempOver(T_EXT_24);
-      NewInputs.InputTempInt22 = TempOver(T_INT_22);
-      NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
-    }
+
     if (strncmp((char *)SerialRx, "MAINT", 5) == 0)
     {
       Mode = MAINTENANCE;
@@ -343,6 +337,14 @@ bool GetInputs() {
     {
       Serial.println("Mode Normal : Pas de commande recue");
     }
+  }
+
+  if (Mode == NORMAL)
+  {
+    NewInputs.InputTempOut15 = TempOver(T_EXT_15);
+    NewInputs.InputTempOut24 = TempOver(T_EXT_24);
+    NewInputs.InputTempInt22 = TempOver(T_INT_22);
+    NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
   }
 
   InputsChanged = (NewInputs.InputTempOut15 ^ OldInputs.InputTempOut15);
