@@ -29,13 +29,13 @@
 
 #define I2C           0x01
 #define VENT_SPARE    I2C << 7
-#define VENT_CHEMINEE 14 //I2C << 6
-#define VENT_CAVE     8  //I2C << 5
-#define SELECT_VMC    9  //I2C << 4
-#define V12_1         0  //I2C << 3
-#define V12_2         I2C << 2
-#define V12_SEL       I2C << 1
-#define V12_IN        I2C << 0
+#define VENT_CHEMINEE 14 //I2C << 6   -- Penser à changer les pinmode à l'init
+#define VENT_CAVE     8  //I2C << 5   -- Penser à changer les pinmode à l'init
+#define SELECT_VMC    9  //I2C << 4   -- Penser à changer les pinmode à l'init
+#define V12_1         0  //I2C << 3   -- Penser à changer les pinmode à l'init
+#define V12_2         I2C << 2 //   -- Penser à changer les pinmode à l'init
+#define V12_SEL       I2C << 1 //   -- Penser à changer les pinmode à l'init
+#define V12_IN        I2C << 0 //   -- Penser à changer les pinmode à l'init
 
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
 #define ENDSTOPS 0                     //Facultatif
