@@ -18,10 +18,9 @@
 #define _mosi SPI_MOSI
 #define _cs TFT_CS
 #define _dc TFT_DC
-#define _rst 8 // A voir
 
 // Use hardware SPI
-Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);
+Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, -1);
 
 enum Modes {
   MAINTENANCE,
@@ -118,13 +117,13 @@ void setup() {
 
 void loop() {
   bool InputsChanged;
-  bool RefreshScreen =false;
+  bool RefreshScreen = false;
   InputsChanged = GetInputs();
 
   if ((FirstLoop == true) or (InputsChanged == true))
   {
     RefreshScreen = true;
-    
+
     char InputsCalc;
     //Construction de la valeur de switch
     InputsCalc = 0;
@@ -174,9 +173,9 @@ void loop() {
         NewOutputs.SortieAirDirect = false;
         NewOutputs.EntreeAirPuit = false;
         break;
-      /*ETAT 6*/
+      /*ETAT 5*/
       case 0x0E : // TExt Chaude - TInt > 22°C - Cheminee Eteinte
-      case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée      
+      case 0x0F : // TExt Chaude - TInt > 22°C - Cheminee Allumée
       case 0x06 : // TExt Error  - TInt > 22°C - Cheminee Eteinte
       case 0x07 : // TExt Error  - TInt > 22°C - Cheminee Allumée
         Serial.println("ETAT 5");
@@ -241,7 +240,7 @@ void loop() {
   // Affichage de l'écran
   if (RefreshScreen == true)
   {
-  DisplayScreen();
+    DisplayScreen();
   }
 }
 
@@ -327,11 +326,13 @@ bool GetInputs() {
     {
       Mode = MAINTENANCE;
       Serial.println("Entree Mode Maintenance");
+      DisplayScreen();
     }
     else if (strncmp((char *)SerialRx, "NORM", 4) == 0)
     {
       Mode = NORMAL;
       Serial.println("Sortie Mode Maintenance");
+      DisplayScreen();
     }
     else if (Mode == NORMAL)
     {
@@ -358,89 +359,198 @@ bool GetInputs() {
 }
 
 /*********************************************************************************/
-/* FONCTION POUR TEST ************************************************************/
+/*                    Fonction d'Affichage sur Ecran                             */
 /*********************************************************************************/
 void DisplayScreen(void)
 {
   int color;
 
+  tft.fillScreen(ILI9340_BLACK);
+
+//************* PARTIE INPUTS ********************
+  
   //Rectangle Exterieur
-  color = 0x4208;
+  if (NewInputs.InputTempOut15 == false)
+  {
+    color = 0x001F;
+  }
+  else if (NewInputs.InputTempOut24 == false)
+  {
+    color = 0x8408;
+  }
+  else
+  {
+    color = 0xF800;
+  }
   tft.fillRect(0, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
 
   // Rectangle Intérieur
-  color = 0xF800;
+  if (NewInputs.InputTempInt22 == false)
+  {
+    color = 0x001F;
+  }
+  else
+  {
+    color = 0xF800;
+  }
   tft.fillRect(tft.width() / 3 + 1, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
 
   // Rectangle Cheminée
-  color = 0x001F;
+  if (NewInputs.InputTempCheminee == false)
+  {
+    color = 0x001F;
+  }
+  else
+  {
+    color = 0xF800;
+  }
   tft.fillRect(2 * tft.width() / 3 + 1, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
 
   //Text Extérieur
   tft.setCursor(20, 10);
   tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
   tft.println("Ext :");
-  tft.setTextSize(1);
+  tft.setTextSize(2);
   tft.setCursor(20, 10 + (tft.height() / 7));
-  tft.print("B");
-  tft.print(" - "); tft.setTextSize(2);
-  tft.print("M"); tft.setTextSize(1);
-  tft.print(" - ");
-  tft.print("H");
+  if (NewInputs.InputTempOut15 == false)
+  {
+    tft.print("F"); tft.setTextSize(1);
+    tft.print(" - ");
+    tft.print("M");
+    tft.print(" - ");
+    tft.print("C");
+  }
+  else if (NewInputs.InputTempOut24 == false)
+  {
+    tft.print("F");
+    tft.print(" - "); tft.setTextSize(2);
+    tft.print("M"); tft.setTextSize(1);
+    tft.print(" - ");
+    tft.print("C");
+  }
+  else
+  {
+    tft.print("F");
+    tft.print(" - ");
+    tft.print("M");
+    tft.print(" - "); tft.setTextSize(2);
+    tft.print("C");
+  }
+
 
   //Texte Intérieur
   tft.setCursor(tft.width() / 3 + 1 + 20, 10);
   tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
   tft.println("Int :");
   tft.setCursor(tft.width() / 3 + 1 + 20, 10 + (tft.height() / 7));
-  tft.print("Chaud");
+  if (NewInputs.InputTempInt22 == false)
+  {
+    tft.print("Froid");
+  }
+  else
+  {
+    tft.print("Chaud");
+  }
+
 
   //Texte cheminée
   tft.setCursor(2 * tft.width() / 3 + 1 + 20, 10);
   tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
   tft.println("Chem :");
   tft.setCursor(2 * tft.width() / 3 + 1 + 20, 10 + (tft.height() / 7));
-  tft.print("Arret");
-}
-
-
-unsigned long testText() {
-  tft.fillScreen(ILI9340_BLACK);
-  tft.setCursor(0, 0);
-  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(1);
-  tft.println("Hello World!");
-  tft.setTextColor(ILI9340_YELLOW); tft.setTextSize(2);
-  tft.println(1234.56);
-  tft.setTextColor(ILI9340_RED);    tft.setTextSize(3);
-  tft.println(0xDEADBEEF, HEX);
-  tft.println();
-  tft.setTextColor(ILI9340_GREEN);
-  tft.setTextSize(5);
-  tft.println("Groop");
-  tft.setTextSize(2);
-  tft.println("I implore thee,");
-  tft.setTextSize(1);
-  tft.println("my foonting turlingdromes.");
-  tft.println("And hooptiously drangle me");
-  tft.println("with crinkly bindlewurdles,");
-  tft.println("Or I will rend thee");
-  tft.println("in the gobberwarts");
-  tft.println("with my blurglecruncheon,");
-  tft.println("see if I don't!");
-}
-
-unsigned long testRects(uint16_t color) {
-  unsigned long start;
-  int           n, i, i2,
-                cx = tft.width()  / 2,
-                cy = tft.height() / 2;
-
-  tft.fillScreen(ILI9340_BLACK);
-  n     = min(tft.width(), tft.height());
-  start = micros();
-  for (i = 2; i < n; i += 6) {
-    i2 = i / 2;
-    tft.drawRect(cx - i2, cy - i2, i, i, color);
+  if (NewInputs.InputTempCheminee == false)
+  {
+    tft.print("Froide");
   }
+  else
+  {
+    tft.print("Chaude");
+  }
+
+
+//************* PARTIE OUTPUTS ********************
+
+  //Texte Recyclage
+  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(2);
+  tft.setCursor(20, 10 + (tft.height() / 7) * 2);
+  tft.println("Recyclage");
+  tft.setCursor(150, 10 + (tft.height() / 7) * 2);
+  if (NewOutputs.SortieAirDirect == false)
+  {
+    tft.println(": DOUBLE FLUX");
+  }
+  else
+  {
+    tft.println(": SIMPLE FLUX");
+  }
+
+  //Texte Puit Canadien
+  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(2);
+  tft.setCursor(20, 10 + (tft.height() / 7) * 3);
+  tft.println("Puit C.");
+  tft.setCursor(150, 10 + (tft.height() / 7) * 3);
+  if (NewOutputs.EntreeAirPuit == true)
+  {
+    tft.println(": FONCTIONNE");
+  }
+  else
+  {
+    tft.println(": CAVE");
+  }
+
+  
+  //Texte Puit Canadien
+  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(2);
+  tft.setCursor(20, 10 + (tft.height() / 7) * 4);
+  tft.println("Air Chem.");
+  tft.setCursor(150, 10 + (tft.height() / 7) * 4);
+ if (NewOutputs.OutputVentiloCheminee == true)
+  {
+    tft.println(": RECYCLE");
+  }
+  else
+  {
+    tft.println(": ARRET");
+  }
+
+
+//************* PARTIE REGLAGES ********************
+
+  //Texte Mode
+  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(2);
+  tft.setCursor(20, 10 + (tft.height() / 7) * 6);
+  tft.println("Mode");
+  tft.setCursor(150, 10 + (tft.height() / 7) * 6);
+  tft.print(": ");
+  if (Mode == MAINTENANCE)
+  {
+    tft.setTextColor(ILI9340_RED);
+    tft.println("MAINT.");
+  }
+  else
+  {
+    tft.setTextColor(ILI9340_GREEN);
+    tft.println("NORMAL");
+  }
+
+  //Texte Réglage
+  tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(2);
+  tft.setCursor(20, 10 + (tft.height() / 7) * 5);
+  tft.println("Reglage");
+  tft.setCursor(150, 10 + (tft.height() / 7) * 5);
+    tft.print(": ");
+  tft.setTextColor(ILI9340_GREEN);
+  tft.println("NORMAL");
 }
 
+/*********************************************************************************/
+/*                    Affichage Message Attente                                  */
+/*********************************************************************************/
+
+void Display_Wait(void)
+{
+  tft.fillScreen(ILI9340_WHITE);tft.setTextSize(2);
+ tft.setTextColor(ILI9340_BLACK);
+ tft.setCursor(60, tft.height() /2 - 5);
+   tft.println("PATIENTEZ SVP ...");
+}

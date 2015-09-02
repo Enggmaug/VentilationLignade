@@ -1,5 +1,5 @@
 /*----- Definition des constantes de base               -----*/
-#define TEMPS_BYPASS 1000//Temps de fermeture/ouverture d'un Bypass
+#define TEMPS_BYPASS 30000//Temps de fermeture/ouverture d'un Bypass
 
 /*----- Utilisation des Pins IO                         -----*/
 //#define SPARE          0
@@ -59,15 +59,15 @@
 #if ENDSTOPS
 //A Ecrire
 #else
-#define BYPASS_2Ouvrir() {Alim_On();digitalWrite(BYPASS_2_1,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS_2_1,BYPASS_DESACT);Alim_Off();}
-#define BYPASS_2Fermer() {Alim_On();digitalWrite(BYPASS_2_2,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS_2_2,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_2Ouvrir() {Display_Wait();Alim_On();digitalWrite(BYPASS_2_1,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS_2_1,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_2Fermer() {Display_Wait();Alim_On();digitalWrite(BYPASS_2_2,BYPASS_ACT);delay(TEMPS_BYPASS);digitalWrite(BYPASS_2_2,BYPASS_DESACT);Alim_Off();}
 #endif
 
 #if ENDSTOPS
 //A Ecrire
 #else
-#define BYPASS_1Ouvrir() {Alim_On();digitalWrite(BYPASS_1_1,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Simple();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS_1_1,BYPASS_DESACT);Alim_Off();}
-#define BYPASS_1Fermer() {Alim_On();digitalWrite(BYPASS_1_2,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Double();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS_1_2,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_1Ouvrir() {Display_Wait();Alim_On();digitalWrite(BYPASS_1_1,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Simple();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS_1_1,BYPASS_DESACT);Alim_Off();}
+#define BYPASS_1Fermer() {Display_Wait();Alim_On();digitalWrite(BYPASS_1_2,BYPASS_ACT);delay(TEMPS_BYPASS/2);VMC_Double();delay(TEMPS_BYPASS/2);digitalWrite(BYPASS_1_2,BYPASS_DESACT);Alim_Off();}
 #endif
 
 //Ventilos
