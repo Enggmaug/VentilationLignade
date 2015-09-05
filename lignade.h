@@ -1,5 +1,5 @@
 /*----- Definition des constantes de base               -----*/
-#define TEMPS_BYPASS 1000//Temps de fermeture/ouverture d'un Bypass
+#define TEMPS_BYPASS 30000//Temps de fermeture/ouverture d'un Bypass
 
 /*----- Utilisation des Pins IO                         -----*/
 //#define SPARE          0

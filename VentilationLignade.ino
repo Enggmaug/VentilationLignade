@@ -14,8 +14,8 @@
 #endif
 
 #if defined(__SAM3X8E__)
-    #undef __FlashStringHelper::F(string_literal)
-    #define F(string_literal) string_literal
+#undef __FlashStringHelper::F(string_literal)
+#define F(string_literal) string_literal
 #endif
 
 /*----- Ajout pour affichage ILI9340                    -----*/
@@ -113,15 +113,15 @@ void setup() {
 
   FirstLoop = true;
 
+  SdCardPresent = SD.begin(SDCARD_CS);
+
   // Mise en route de l'affichage
   tft.begin();
 
   tft.setRotation(3);
   tft.fillScreen(ILI9340_BLACK);
 
- SdCardPresent= SD.begin(SDCARD_CS);
- Serial.println(SdCardPresent);
- }
+}
 
 void loop() {
   bool InputsChanged;
@@ -249,6 +249,7 @@ void loop() {
   if (RefreshScreen == true)
   {
     DisplayScreen();
+    RefreshScreen = false;
   }
 }
 
@@ -386,13 +387,11 @@ void DisplaySD(void)
   int condition = 0;
   char CharArray[16];
   char* filename;
-  condition = NewInputs.InputTempOut15;
-  condition << 1;
-  condition += NewInputs.InputTempOut24;
-  condition << 1;
-  condition += NewInputs.InputTempInt22;
-  condition << 1;
-  condition += NewInputs.InputTempCheminee;
+  condition = 0;
+  if (NewInputs.InputTempOut24 == true)condition += 8 ;
+  if (NewInputs.InputTempOut15 == true)condition += 4 ;
+  if (NewInputs.InputTempInt22 == true)condition += 2 ;
+  if (NewInputs.InputTempCheminee == true )condition += 1 ;
 
   filename = CharArray;
   switch (condition)
@@ -422,15 +421,19 @@ void DisplaySD(void)
       filename =  strcpy ( filename,  "mcon");
       break;
     case 8:
+    case 12:
       filename =  strcpy ( filename,  "cfoff");
       break;
     case 9:
+    case 13:
       filename =  strcpy ( filename,  "cfon");
       break;
     case 10:
+    case 14:
       filename =   strcpy ( filename,  "ccoff");
       break;
     case 11:
+    case 15:
       filename =  strcpy ( filename,  "ccon");
       break;
     default :
@@ -439,9 +442,70 @@ void DisplaySD(void)
 
   filename = strcat(filename, ".bmp");
 
-  if (bmpDraw(filename, 320, 240) == false)
+  if (bmpDraw(filename, 0, 0) == false)
   {
     DisplayNoSD();
+  }
+  else
+  {
+    //************* PARTIE OUTPUTS ********************
+
+    //Texte Recyclage
+    tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
+    tft.setCursor(50, (tft.height() / 7) * 2);
+    tft.println("VMC");
+    tft.setCursor(130, (tft.height() / 7) * 2);
+    if (NewOutputs.SortieAirDirect == false)
+    {
+      tft.println(": D. FLUX");
+    }
+    else
+    {
+      tft.println(": S. FLUX");
+    }
+
+    //Texte Puit Canadien
+    tft.setCursor(50,  (tft.height() / 7) * 3);
+    tft.println("Puit C.");
+    tft.setCursor(130, (tft.height() / 7) * 3);
+    if (NewOutputs.EntreeAirPuit == true)
+    {
+      tft.println(": MARCHE");
+    }
+    else
+    {
+      tft.println(": CAVE");
+    }
+
+
+    //Texte Cheminee
+    tft.setCursor(50, (tft.height() / 7) * 4);
+    tft.println("V Chem.");
+    tft.setCursor(130, (tft.height() / 7) * 4);
+    if (NewOutputs.OutputVentiloCheminee == true)
+    {
+      tft.println(": RECYCLE");
+    }
+    else
+    {
+      tft.println(": ARRET");
+    }
+    //************* PARTIE REGLAGES ********************
+
+    //Texte Réglage
+    tft.setCursor(50,  (tft.height() / 7) * 5);
+    tft.println("Reglage");
+    tft.setCursor(130,  (tft.height() / 7) * 5);
+    tft.print(": ");
+    tft.setTextColor(ILI9340_GREEN);
+    tft.println("NORMAL");
+
+    if (Mode == MAINTENANCE)
+    {
+      tft.setTextColor(ILI9340_RED); tft.setTextSize(3);
+      tft.setCursor(20,  215);
+      tft.println("MODE MAINTENANCE");
+    }
   }
 
 }
@@ -585,7 +649,7 @@ void DisplayNoSD(void)
   }
 
 
-  //Texte Puit Canadien
+  //Texte Cheminee
   tft.setTextColor(ILI9340_WHITE);  tft.setTextSize(2);
   tft.setCursor(20, 10 + (tft.height() / 7) * 4);
   tft.println("Air Chem.");
@@ -657,11 +721,6 @@ bool bmpDraw(char *filename, uint16_t x, uint16_t y) {
 
   if ((x >= tft.width()) || (y >= tft.height())) return (false);
 
-  Serial.println();
-  Serial.print("Loading image '");
-  Serial.print(filename);
-  Serial.println('\'');
-
   // Open requested file on SD card
   if ((bmpFile = SD.open(filename)) == NULL) {
     Serial.print("File not found");
@@ -670,24 +729,18 @@ bool bmpDraw(char *filename, uint16_t x, uint16_t y) {
 
   // Parse BMP header
   if (read16(bmpFile) == 0x4D42) { // BMP signature
-    Serial.print("File size: "); Serial.println(read32(bmpFile));
+  read32(bmpFile);
     (void)read32(bmpFile); // Read & ignore creator bytes
     bmpImageoffset = read32(bmpFile); // Start of image data
-    Serial.print("Image Offset: "); Serial.println(bmpImageoffset, DEC);
     // Read DIB header
-    Serial.print("Header size: "); Serial.println(read32(bmpFile));
+    read32(bmpFile);
     bmpWidth  = read32(bmpFile);
     bmpHeight = read32(bmpFile);
     if (read16(bmpFile) == 1) { // # planes -- must be '1'
       bmpDepth = read16(bmpFile); // bits per pixel
-      Serial.print("Bit Depth: "); Serial.println(bmpDepth);
       if ((bmpDepth == 24) && (read32(bmpFile) == 0)) { // 0 = uncompressed
 
         goodBmp = true; // Supported BMP format -- proceed!
-        Serial.print("Image size: ");
-        Serial.print(bmpWidth);
-        Serial.print('x');
-        Serial.println(bmpHeight);
 
         // BMP rows are padded (if needed) to 4-byte boundary
         rowSize = (bmpWidth * 3 + 3) & ~3;
@@ -739,9 +792,6 @@ bool bmpDraw(char *filename, uint16_t x, uint16_t y) {
             tft.pushColor(tft.Color565(r, g, b));
           } // end pixel
         } // end scanline
-        Serial.print("Loaded in ");
-        Serial.print(millis() - startTime);
-        Serial.println(" ms");
       } // end goodBmp
     }
   }
