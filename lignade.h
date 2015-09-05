@@ -1,5 +1,5 @@
 /*----- Definition des constantes de base               -----*/
-#define TEMPS_BYPASS 30000//Temps de fermeture/ouverture d'un Bypass
+#define TEMPS_BYPASS 1000//Temps de fermeture/ouverture d'un Bypass
 
 /*----- Utilisation des Pins IO                         -----*/
 //#define SPARE          0
@@ -18,6 +18,7 @@
 #define SPI_SCK       13
 #define T_CHEMINEE    14
 #define TFT_DC        9
+#define TFT_RST       -1
 #define T_INT_22      16
 #define T_EXT_24      17
 #define T_EXT_15      18
@@ -31,7 +32,7 @@
 #define VENT_SPARE    I2C << 7
 #define VENT_CHEMINEE 14 //I2C << 6   -- Penser à changer les pinmode à l'init
 #define VENT_CAVE     8  //I2C << 5   -- Penser à changer les pinmode à l'init
-#define SELECT_VMC    9  //I2C << 4   -- Penser à changer les pinmode à l'init
+#define SELECT_VMC    23//9  //I2C << 4   -- Penser à changer les pinmode à l'init
 #define V12_1         0  //I2C << 3   -- Penser à changer les pinmode à l'init
 #define V12_2         I2C << 2 //   -- Penser à changer les pinmode à l'init
 #define V12_SEL       I2C << 1 //   -- Penser à changer les pinmode à l'init
