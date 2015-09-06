@@ -51,6 +51,7 @@ void setup() {
   Alim_Off();
 
   Mode = NORMAL;
+  Reglage = NORM;
 
   NewInputs.InputTempOut15 = TempOver(T_EXT_15);
   NewInputs.InputTempOut24 = TempOver(T_EXT_24);

@@ -11,32 +11,34 @@
 #define BYPASS_2_2     6
 //#define SPARE          7
 //#define SPARE          8
-#define SDCARD_CS     15
+#define TFT_DC        9
 #define TFT_CS        10
+#define TFT_RST       -1
 #define SPI_MOSI      11
 #define SPI_MISO      12
 #define SPI_SCK       13
-#define T_CHEMINEE    14
-#define TFT_DC        9
-#define TFT_RST       -1
-#define T_INT_22      16
-#define T_EXT_24      17
-#define T_EXT_15      18
-#define ENDSTOP2_2    19
-#define ENDSTOP2_1    20
-#define ENDSTOP1_2    21
-#define ENDSTOP1_1    22
-//#define SPARE         23
+//#define SPARE          14
+#define SDCARD_CS     15
+#define ENDSTOP2_2    16
+#define ENDSTOP2_1    17
+#define ENDSTOP1_2    18
+#define ENDSTOP1_1    19
+#define T_EXT_15      20 // changé pour etre sur une pin CS pour thermocouple SPI => Futur SPARE
+#define T_EXT_24      21 // changé pour etre sur une pin CS pour thermocouple SPI
+#define T_INT_22      22 // changé pour etre sur une pin CS pour thermocouple SPI
+#define T_CHEMINEE    23 // changé pour etre sur une pin CS pour thermocouple SPI
 
-#define I2C           0x01
-#define VENT_SPARE    I2C << 7
-#define VENT_CHEMINEE 14 //I2C << 6   -- Penser à changer les pinmode à l'init
-#define VENT_CAVE     8  //I2C << 5   -- Penser à changer les pinmode à l'init
-#define SELECT_VMC    23//9  //I2C << 4   -- Penser à changer les pinmode à l'init
-#define V12_1         0  //I2C << 3   -- Penser à changer les pinmode à l'init
-#define V12_2         I2C << 2 //   -- Penser à changer les pinmode à l'init
-#define V12_SEL       I2C << 1 //   -- Penser à changer les pinmode à l'init
-#define V12_IN        I2C << 0 //   -- Penser à changer les pinmode à l'init
+
+#define VENT_CHEMINEE 24 //   -- Penser à changer les branchements
+#define VENT_CAVE     25 //   -- Penser à changer les branchements
+#define SELECT_VMC    26 //   -- Penser à changer les branchements
+#define V12_1         27 //   -- Penser à changer les branchements
+#define V12_2         28 //   -- Penser à changer les branchements
+#define V12_SEL       29 //   -- Penser à changer les branchements
+#define V12_IN        30 //   -- Penser à changer les branchements
+#define SWITCH_MENU   31
+#define MENU_A        32
+#define MENU_B        33
 
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
 #define ENDSTOPS 0                     //Facultatif

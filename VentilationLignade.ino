@@ -25,6 +25,12 @@ enum Modes {
   NORMAL
 } Mode;
 
+enum Reglages {
+  RAFRAICHIR,
+  NORM,
+  RECHAUFFER
+} Reglage;
+
 typedef struct Inputs {
   bool InputTempOut15;
   bool InputTempOut24;
