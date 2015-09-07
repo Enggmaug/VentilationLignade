@@ -36,7 +36,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 2
 Title ""
-Date "6 sep 2015"
+Date "7 sep 2015"
 Rev ""
 Comp ""
 Comment1 ""
@@ -718,13 +718,13 @@ NoConn ~ 5550 5550
 NoConn ~ 5450 5550
 NoConn ~ 5550 4750
 NoConn ~ 5450 4750
-Text GLabel 6950 6150 0    60   Output ~ 0
+Text GLabel 6600 5900 0    60   Output ~ 0
 BYPASS_1_F
-Text GLabel 6950 6300 0    60   Output ~ 0
+Text GLabel 6600 6050 0    60   Output ~ 0
 BYPASS_1_O
-Text GLabel 6950 6450 0    60   Output ~ 0
+Text GLabel 6600 6200 0    60   Output ~ 0
 BYPASS_2_F
-Text GLabel 6950 6600 0    60   Output ~ 0
+Text GLabel 6600 6350 0    60   Output ~ 0
 BYPASS_2_O
 Text GLabel 8400 6300 2    60   Output ~ 0
 TFT_DC
@@ -1072,22 +1072,6 @@ Wire Wire Line
 Wire Wire Line
 	6750 5550 6750 5750
 Wire Wire Line
-	6950 6150 7150 6150
-Wire Wire Line
-	7150 6150 7150 5550
-Wire Wire Line
-	6950 6300 7250 6300
-Wire Wire Line
-	7250 6300 7250 5550
-Wire Wire Line
-	6950 6450 7350 6450
-Wire Wire Line
-	7350 6450 7350 5550
-Wire Wire Line
-	6950 6600 7450 6600
-Wire Wire Line
-	7450 6600 7450 5550
-Wire Wire Line
 	8400 5900 7950 5900
 Wire Wire Line
 	7950 5900 7950 5550
@@ -1135,7 +1119,6 @@ Wire Wire Line
 	8200 3950 7450 3950
 Wire Wire Line
 	7450 3950 7450 4750
-NoConn ~ 7950 4750
 Text GLabel 6550 3650 0    60   Output ~ 0
 TEXT_CS
 Text GLabel 6550 3850 0    60   Output ~ 0
@@ -1155,69 +1138,26 @@ Wire Wire Line
 Wire Wire Line
 	7050 4050 7050 4750
 NoConn ~ 7350 4750
-NoConn ~ 7550 5550
-NoConn ~ 7650 5550
-NoConn ~ 7050 5550
-NoConn ~ 6950 5550
-NoConn ~ 6850 5550
-Text GLabel 4400 6300 0    60   Output ~ 0
+Text GLabel 6600 6650 0    60   Output ~ 0
 VENT_CHEMINEE
-Text GLabel 4400 6150 0    60   Output ~ 0
+Text GLabel 6600 6500 0    60   Output ~ 0
 VENT_CAVE
-Text GLabel 4400 6000 0    60   Output ~ 0
+Text GLabel 7750 6750 2    60   Output ~ 0
 SELECT_VMC
-Text GLabel 4400 5850 0    60   Output ~ 0
+Text GLabel 6600 6800 0    60   Output ~ 0
 12V1_ON
-Text GLabel 4400 5700 0    60   Output ~ 0
+Text GLabel 7750 6550 2    60   Output ~ 0
 12V2_ON
-Wire Wire Line
-	4400 5700 4950 5700
-Wire Wire Line
-	4950 5700 4950 5550
-Wire Wire Line
-	4400 5850 5050 5850
-Wire Wire Line
-	5050 5850 5050 5550
-Wire Wire Line
-	4400 6000 5150 6000
-Wire Wire Line
-	5150 6000 5150 5550
-Wire Wire Line
-	4400 6150 5250 6150
-Wire Wire Line
-	5250 6150 5250 5550
-Wire Wire Line
-	4400 6300 5350 6300
-Wire Wire Line
-	5350 6300 5350 5550
-Text GLabel 4300 4700 0    60   Output ~ 0
+Text GLabel 4300 5550 0    60   Output ~ 0
 SELECT_12V
-Text GLabel 4300 4550 0    60   Input ~ 0
+Text GLabel 8200 4700 2    60   Input ~ 0
 12V_CHECK
-Text GLabel 4300 4400 0    60   Input ~ 0
+Text GLabel 4300 5700 0    60   Input ~ 0
 ENCODEUR_SW
-Text GLabel 4300 4250 0    60   Input ~ 0
+Text GLabel 4300 4400 0    60   Input ~ 0
 ENCODEUR_A
-Text GLabel 4300 4100 0    60   Input ~ 0
+Text GLabel 4300 5850 0    60   Input ~ 0
 ENCODEUR_B
-Wire Wire Line
-	4300 4700 4950 4700
-Wire Wire Line
-	4950 4700 4950 4750
-Wire Wire Line
-	4300 4550 5050 4550
-Wire Wire Line
-	5050 4550 5050 4750
-Wire Wire Line
-	4300 4400 5150 4400
-Wire Wire Line
-	4300 4250 5250 4250
-Wire Wire Line
-	5250 4250 5250 4750
-Wire Wire Line
-	4300 4100 5350 4100
-Wire Wire Line
-	5350 4100 5350 4750
 $Comp
 L CONN_2 P17
 U 1 1 55ECBD12
@@ -1275,8 +1215,6 @@ Wire Wire Line
 	7300 3150 9100 3150
 Wire Wire Line
 	7100 3250 9100 3250
-Wire Wire Line
-	5150 4400 5150 4750
 $Comp
 L +3.3V #PWR030
 U 1 1 55ECE1E8
@@ -1421,4 +1359,64 @@ F 3 "" H 7350 5100 60  0000 C CNN
 	1    7350 5100
 	0    1    1    0   
 $EndComp
+Wire Wire Line
+	6600 5900 6850 5900
+Wire Wire Line
+	6850 5900 6850 5550
+Wire Wire Line
+	6600 6050 6950 6050
+Wire Wire Line
+	6950 6050 6950 5550
+Wire Wire Line
+	6600 6200 7050 6200
+Wire Wire Line
+	7050 6200 7050 5550
+Wire Wire Line
+	6600 6350 7150 6350
+Wire Wire Line
+	7150 6350 7150 5550
+Wire Wire Line
+	6600 6500 7250 6500
+Wire Wire Line
+	7250 6500 7250 5550
+Wire Wire Line
+	6600 6650 7350 6650
+Wire Wire Line
+	7350 6650 7350 5550
+Wire Wire Line
+	6600 6800 7450 6800
+Wire Wire Line
+	7450 6800 7450 5550
+Wire Wire Line
+	7650 6550 7750 6550
+Wire Wire Line
+	7650 6550 7650 5550
+Wire Wire Line
+	7750 6750 7550 6750
+Wire Wire Line
+	7550 6750 7550 5550
+NoConn ~ 5250 5550
+NoConn ~ 5350 5550
+Wire Wire Line
+	4300 5550 4950 5550
+Wire Wire Line
+	4300 4400 5050 4400
+Wire Wire Line
+	5050 4400 5050 4750
+Wire Wire Line
+	4300 5700 5050 5700
+Wire Wire Line
+	5050 5700 5050 5550
+Wire Wire Line
+	4300 5850 5150 5850
+Wire Wire Line
+	5150 5850 5150 5550
+NoConn ~ 5150 4750
+NoConn ~ 5250 4750
+NoConn ~ 5350 4750
+Wire Wire Line
+	7950 4750 7950 4700
+Wire Wire Line
+	7950 4700 8200 4700
+NoConn ~ 4950 4750
 $EndSCHEMATC
