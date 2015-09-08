@@ -29,14 +29,14 @@
 #define T_CHEMINEE     23 // changé pour etre sur une pin CS pour thermocouple SPI
 
 
-//#define SPARE  
-//#define SPARE  
-//#define SPARE  
-//#define SPARE  
-//#define SPARE    
-#define V12_SEL        29 //
-//#define SPARE        30 //
-#define SWITCH_MENU    31
+//#define SPARE        24
+//#define SPARE        25
+#define RX2            26
+//#define SPARE        27
+//#define SPARE        28
+#define V12_SEL        29
+#define SWITCH_MENU    30
+#define TX2            31
 #define MENU_A         32
 #define MENU_B         33
 
