@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 06/09/2015 23:40:22
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 09/09/2015 15:20:40
 
 BeginCmp
 TimeStamp = /55EC9CD8;
@@ -22,157 +22,199 @@ IdModule  = SM1206;
 EndCmp
 
 BeginCmp
+TimeStamp = /55EF1C37;
+Reference = C4;
+ValeurCmp = C;
+IdModule  = C2;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EF1C46;
+Reference = C5;
+ValeurCmp = C;
+IdModule  = C2;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EEB60C;
+Reference = C7;
+ValeurCmp = C;
+IdModule  = C2;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EEB61B;
+Reference = C8;
+ValeurCmp = C;
+IdModule  = C2;
+EndCmp
+
+BeginCmp
 TimeStamp = /55EC7379;
 Reference = P1;
-ValeurCmp = CONN_4;
+ValeurCmp = RelaisBoard1;
 IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC76FC;
 Reference = P2;
-ValeurCmp = CONN_5;
+ValeurCmp = Temp_Ext;
 IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7388;
 Reference = P3;
-ValeurCmp = CONN_4;
+ValeurCmp = RelaisBoard2;
 IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC770B;
 Reference = P4;
-ValeurCmp = CONN_5;
+ValeurCmp = Temp_Int;
 IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7397;
 Reference = P5;
-ValeurCmp = CONN_4;
+ValeurCmp = RelaisBoard3;
 IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7718;
 Reference = P6;
-ValeurCmp = CONN_5;
+ValeurCmp = Temp_Chem;
 IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC73A6;
 Reference = P7;
-ValeurCmp = CONN_4;
+ValeurCmp = RelaisBoard4;
 IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC73B5;
 Reference = P8;
-ValeurCmp = CONN_4;
+ValeurCmp = RelaisBoard5;
 IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC787B;
 Reference = P9;
-ValeurCmp = CONN_9;
+ValeurCmp = TFT;
 IdModule  = SIL-9;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7862;
 Reference = P10;
-ValeurCmp = CONN_5;
+ValeurCmp = SDCard;
 IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7782;
 Reference = P11;
-ValeurCmp = CONN_5;
+ValeurCmp = Codeur Rotatif;
 IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
-TimeStamp = /55ECA1A9;
+TimeStamp = /55F0328C;
 Reference = P12;
-ValeurCmp = CONN_7X2;
-IdModule  = DIP-14__300;
+ValeurCmp = CONN_10;
+IdModule  = SIL-10;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC78C0;
 Reference = P13;
-ValeurCmp = CONN_2;
+ValeurCmp = EndStops1;
 IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /55ECB3CF;
 Reference = P14;
-ValeurCmp = CONN_13;
+ValeurCmp = Teensy_Haut;
 IdModule  = SIL-13;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC78CF;
 Reference = P15;
-ValeurCmp = CONN_2;
+ValeurCmp = EndStops2;
 IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /55ECA19A;
 Reference = P16;
-ValeurCmp = CONN_7;
+ValeurCmp = Teensy_cote;
 IdModule  = SIL-7;
 EndCmp
 
 BeginCmp
 TimeStamp = /55ECBD12;
 Reference = P17;
-ValeurCmp = CONN_2;
+ValeurCmp = Retour 12V;
 IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7564;
 Reference = P18;
-ValeurCmp = CONN_4;
+ValeurCmp = Masse_12V;
 IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC74D3;
 Reference = P19;
-ValeurCmp = CONN_2;
+ValeurCmp = 12V1;
 IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC74E2;
 Reference = P20;
-ValeurCmp = CONN_2;
+ValeurCmp = 12V2;
 IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7555;
 Reference = P21;
-ValeurCmp = CONN_2;
+ValeurCmp = 12V_1et2;
 IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /55ECB3C0;
 Reference = P22;
-ValeurCmp = CONN_13;
+ValeurCmp = Teensy_Bas;
 IdModule  = SIL-13;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EEB62A;
+Reference = P23;
+ValeurCmp = Serial;
+IdModule  = SIL-4;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EFE3DE;
+Reference = P24;
+ValeurCmp = Temp_PuitC;
+IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
@@ -183,17 +225,38 @@ IdModule  = R4;
 EndCmp
 
 BeginCmp
+TimeStamp = /55EF237B;
+Reference = R2;
+ValeurCmp = R;
+IdModule  = R4;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EF267E;
+Reference = R3;
+ValeurCmp = R;
+IdModule  = R4;
+EndCmp
+
+BeginCmp
 TimeStamp = /55EC7C77;
 Reference = SW1;
-ValeurCmp = SWITCH_INV;
+ValeurCmp = Reset_Push;
 IdModule  = SIL-3;
 EndCmp
 
 BeginCmp
 TimeStamp = /55EC7ABF;
 Reference = SW2;
-ValeurCmp = SWITCH_INV;
+ValeurCmp = BackLight_On/ff;
 IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /55EEB4F2;
+Reference = U1;
+ValeurCmp = MAX232;
+IdModule  = SO16W;
 EndCmp
 
 EndListe
