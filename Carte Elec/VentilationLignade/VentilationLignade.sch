@@ -36,7 +36,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 2
 Title ""
-Date "9 sep 2015"
+Date "12 sep 2015"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1332,39 +1332,6 @@ Wire Wire Line
 Wire Wire Line
 	7950 4700 8200 4700
 $Comp
-L MAX232 U1
-U 1 1 55EEB4F2
-P 1800 4800
-F 0 "U1" H 1800 5650 70  0000 C CNN
-F 1 "MAX232" H 1800 3950 70  0000 C CNN
-F 2 "" H 1800 4800 60  0000 C CNN
-F 3 "" H 1800 4800 60  0000 C CNN
-	1    1800 4800
-	-1   0    0    -1  
-$EndComp
-$Comp
-L C C7
-U 1 1 55EEB60C
-P 2800 4300
-F 0 "C7" H 2800 4400 40  0000 L CNN
-F 1 "C" H 2806 4215 40  0000 L CNN
-F 2 "~" H 2838 4150 30  0000 C CNN
-F 3 "~" H 2800 4300 60  0000 C CNN
-	1    2800 4300
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C8
-U 1 1 55EEB61B
-P 2800 4800
-F 0 "C8" H 2800 4900 40  0000 L CNN
-F 1 "C" H 2806 4715 40  0000 L CNN
-F 2 "~" H 2838 4650 30  0000 C CNN
-F 3 "~" H 2800 4800 60  0000 C CNN
-	1    2800 4800
-	1    0    0    -1  
-$EndComp
-$Comp
 L CONN_4 P23
 U 1 1 55EEB62A
 P 450 5350
@@ -1375,150 +1342,6 @@ F 3 "" H 450 5350 60  0000 C CNN
 	1    450  5350
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	2600 4100 2800 4100
-Wire Wire Line
-	2600 4500 2800 4500
-Wire Wire Line
-	2600 4600 2800 4600
-Wire Wire Line
-	2800 5000 2600 5000
-$Comp
-L GND #PWR038
-U 1 1 55EEBF63
-P 800 4750
-F 0 "#PWR038" H 800 4750 30  0001 C CNN
-F 1 "GND" H 800 4680 30  0001 C CNN
-F 2 "" H 800 4750 60  0000 C CNN
-F 3 "" H 800 4750 60  0000 C CNN
-	1    800  4750
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	800  4750 800  4700
-Wire Wire Line
-	800  4700 1000 4700
-$Comp
-L +3.3V #PWR039
-U 1 1 55EEC091
-P 800 4050
-F 0 "#PWR039" H 800 4010 30  0001 C CNN
-F 1 "+3.3V" H 800 4160 30  0000 C CNN
-F 2 "" H 800 4050 60  0000 C CNN
-F 3 "" H 800 4050 60  0000 C CNN
-	1    800  4050
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	800  4100 800  4050
-Wire Wire Line
-	550  4100 1000 4100
-$Comp
-L C C4
-U 1 1 55EF1C37
-P 550 4300
-F 0 "C4" H 550 4400 40  0000 L CNN
-F 1 "C" H 556 4215 40  0000 L CNN
-F 2 "~" H 588 4150 30  0000 C CNN
-F 3 "~" H 550 4300 60  0000 C CNN
-	1    550  4300
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C5
-U 1 1 55EF1C46
-P 550 4800
-F 0 "C5" H 550 4900 40  0000 L CNN
-F 1 "C" H 556 4715 40  0000 L CNN
-F 2 "~" H 588 4650 30  0000 C CNN
-F 3 "~" H 550 4800 60  0000 C CNN
-	1    550  4800
-	1    0    0    -1  
-$EndComp
-Connection ~ 800  4100
-Wire Wire Line
-	550  4500 550  4600
-Wire Wire Line
-	550  5000 1000 5000
-$Comp
-L GND #PWR040
-U 1 1 55EF2234
-P 650 4600
-F 0 "#PWR040" H 650 4600 30  0001 C CNN
-F 1 "GND" H 650 4530 30  0001 C CNN
-F 2 "" H 650 4600 60  0000 C CNN
-F 3 "" H 650 4600 60  0000 C CNN
-	1    650  4600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	550  4550 650  4550
-Wire Wire Line
-	650  4550 650  4600
-Connection ~ 550  4550
-$Comp
-L GND #PWR041
-U 1 1 55EF236C
-P 1700 5800
-F 0 "#PWR041" H 1700 5800 30  0001 C CNN
-F 1 "GND" H 1700 5730 30  0001 C CNN
-F 2 "" H 1700 5800 60  0000 C CNN
-F 3 "" H 1700 5800 60  0000 C CNN
-	1    1700 5800
-	1    0    0    -1  
-$EndComp
-$Comp
-L R R2
-U 1 1 55EF237B
-P 1300 5700
-F 0 "R2" V 1380 5700 40  0000 C CNN
-F 1 "R" V 1307 5701 40  0000 C CNN
-F 2 "~" V 1230 5700 30  0000 C CNN
-F 3 "~" H 1300 5700 30  0000 C CNN
-	1    1300 5700
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	950  5700 1050 5700
-Wire Wire Line
-	1550 5700 1700 5700
-Wire Wire Line
-	1700 5700 1700 5800
-$Comp
-L R R3
-U 1 1 55EF267E
-P 3000 5550
-F 0 "R3" V 3080 5550 40  0000 C CNN
-F 1 "R" V 3007 5551 40  0000 C CNN
-F 2 "~" V 2930 5550 30  0000 C CNN
-F 3 "~" H 3000 5550 30  0000 C CNN
-	1    3000 5550
-	1    0    0    -1  
-$EndComp
-NoConn ~ 2600 5500
-Wire Wire Line
-	2600 5300 3000 5300
-$Comp
-L GND #PWR042
-U 1 1 55EF27BC
-P 3000 5850
-F 0 "#PWR042" H 3000 5850 30  0001 C CNN
-F 1 "GND" H 3000 5780 30  0001 C CNN
-F 2 "" H 3000 5850 60  0000 C CNN
-F 3 "" H 3000 5850 60  0000 C CNN
-	1    3000 5850
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3000 5850 3000 5800
-Text GLabel 2750 5200 2    60   Input ~ 0
-TX
-Wire Wire Line
-	2750 5200 2600 5200
-Text GLabel 2750 5400 2    60   Output ~ 0
-RX
-Wire Wire Line
-	2750 5400 2600 5400
 Text GLabel 4300 6150 0    60   Input ~ 0
 RX
 Text GLabel 4250 6300 0    60   Output ~ 0
@@ -1615,50 +1438,6 @@ Wire Wire Line
 	1350 1450 1350 2350
 Connection ~ 1350 2350
 $Comp
-L +5V #PWR045
-U 1 1 55F02361
-P 800 4350
-F 0 "#PWR045" H 800 4440 20  0001 C CNN
-F 1 "+5V" H 800 4440 30  0000 C CNN
-F 2 "" H 800 4350 60  0000 C CNN
-F 3 "" H 800 4350 60  0000 C CNN
-	1    800  4350
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	800  4350 800  4500
-Wire Wire Line
-	800  5300 850  5300
-Wire Wire Line
-	850  5300 850  5500
-Wire Wire Line
-	850  5500 1000 5500
-Wire Wire Line
-	1000 5400 950  5400
-Wire Wire Line
-	950  5400 950  5700
-Wire Wire Line
-	950  5550 800  5550
-Wire Wire Line
-	800  5550 800  5500
-Wire Wire Line
-	1000 5300 950  5300
-Wire Wire Line
-	950  5300 950  5200
-Wire Wire Line
-	950  5200 800  5200
-Wire Wire Line
-	1000 5200 1000 5250
-Wire Wire Line
-	1000 5250 900  5250
-Wire Wire Line
-	900  5250 900  5400
-Wire Wire Line
-	900  5400 800  5400
-Connection ~ 950  5550
-Wire Wire Line
-	800  4500 1000 4500
-$Comp
 L CONN_10 P12
 U 1 1 55F0328C
 P 4850 5050
@@ -1697,4 +1476,42 @@ NoConn ~ 5000 5400
 NoConn ~ 5100 5400
 NoConn ~ 5200 5400
 NoConn ~ 5300 5400
+$Comp
+L +5V #PWR?
+U 1 1 55F44B6E
+P 950 5100
+F 0 "#PWR?" H 950 5190 20  0001 C CNN
+F 1 "+5V" H 950 5190 30  0000 C CNN
+F 2 "" H 950 5100 60  0000 C CNN
+F 3 "" H 950 5100 60  0000 C CNN
+	1    950  5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 55F44B7D
+P 950 5600
+F 0 "#PWR?" H 950 5600 30  0001 C CNN
+F 1 "GND" H 950 5530 30  0001 C CNN
+F 2 "" H 950 5600 60  0000 C CNN
+F 3 "" H 950 5600 60  0000 C CNN
+	1    950  5600
+	1    0    0    -1  
+$EndComp
+Text GLabel 950  5300 2    60   Input ~ 0
+RX
+Text GLabel 950  5400 2    60   Output ~ 0
+TX
+Wire Wire Line
+	800  5200 950  5200
+Wire Wire Line
+	950  5200 950  5100
+Wire Wire Line
+	800  5300 950  5300
+Wire Wire Line
+	800  5400 950  5400
+Wire Wire Line
+	800  5500 950  5500
+Wire Wire Line
+	950  5500 950  5600
 $EndSCHEMATC
