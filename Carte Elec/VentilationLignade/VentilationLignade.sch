@@ -36,7 +36,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 2
 Title ""
-Date "12 sep 2015"
+Date "13 sep 2015"
 Rev ""
 Comp ""
 Comment1 ""
@@ -700,7 +700,6 @@ $EndComp
 NoConn ~ 6850 4750
 NoConn ~ 8550 5350
 NoConn ~ 8550 5250
-NoConn ~ 8550 5150
 NoConn ~ 8550 5050
 NoConn ~ 8550 4950
 Text GLabel 6600 5900 0    60   Output ~ 0
@@ -1498,9 +1497,9 @@ F 3 "" H 950 5600 60  0000 C CNN
 	1    950  5600
 	1    0    0    -1  
 $EndComp
-Text GLabel 950  5300 2    60   Input ~ 0
+Text GLabel 950  5400 2    60   Input ~ 0
 RX
-Text GLabel 950  5400 2    60   Output ~ 0
+Text GLabel 950  5300 2    60   Output ~ 0
 TX
 Wire Wire Line
 	800  5200 950  5200
@@ -1514,4 +1513,19 @@ Wire Wire Line
 	800  5500 950  5500
 Wire Wire Line
 	950  5500 950  5600
+$Comp
+L GND #PWR?
+U 1 1 55F5D525
+P 8750 5250
+F 0 "#PWR?" H 8750 5250 30  0001 C CNN
+F 1 "GND" H 8750 5180 30  0001 C CNN
+F 2 "" H 8750 5250 60  0000 C CNN
+F 3 "" H 8750 5250 60  0000 C CNN
+	1    8750 5250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8750 5250 8750 5150
+Wire Wire Line
+	8750 5150 8550 5150
 $EndSCHEMATC
