@@ -32,9 +32,9 @@ enum Reglages {
 } Reglage;
 
 typedef struct Inputs {
-  bool InputTempOut15;
-  bool InputTempOut24;
-  bool InputTempInt22;
+  bool InputTempOutLow;
+  bool InputTempOutHigh;
+  bool InputTempInt;
   bool InputTempCheminee;
 } Inputs;
 

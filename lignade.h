@@ -23,9 +23,9 @@
 #define ENDSTOP2_1     17
 #define ENDSTOP1_2     18
 #define ENDSTOP1_1     19
-#define T_EXT_15       20 // changé pour etre sur une pin CS pour thermocouple SPI => Futur SPARE
-#define T_EXT_24       21 // changé pour etre sur une pin CS pour thermocouple SPI
-#define T_INT_22       22 // changé pour etre sur une pin CS pour thermocouple SPI
+#define T_EXT_LOW      20 // changé pour etre sur une pin CS pour thermocouple SPI => Futur SPARE
+#define T_EXT_HIGH     21 // changé pour etre sur une pin CS pour thermocouple SPI
+#define T_INT          22 // changé pour etre sur une pin CS pour thermocouple SPI
 #define T_CHEMINEE     23 // changé pour etre sur une pin CS pour thermocouple SPI
 
 
@@ -43,10 +43,15 @@
 /*----- Autorise/Inhibe l'utilisation des blocs         -----*/
 #define ENDSTOPS 0                     //Facultatif
 #define MONITORING_12V 0               //Facultatif
+#define THERMOCOUPLE 0                 //Facultatif
 
 /*----- Methode alternative aux blocs inhibés           -----*/
 //Thermostats
+#if THERMOCOUPLE
+#define TempOver(Thermostat) GetTemp(Thermostat)
+#else
 #define TempOver(Thermostat) not(digitalRead(Thermostat))
+#endif
 
 //EndStops
 #define ENDSTOP_OPEN HIGH

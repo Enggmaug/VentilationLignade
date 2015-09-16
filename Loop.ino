@@ -11,11 +11,11 @@ void loop() {
     char InputsCalc;
     //Construction de la valeur de switch
     InputsCalc = 0;
-    InputsCalc = (char) NewInputs.InputTempOut15;
+    InputsCalc = (char) NewInputs.InputTempOutLow;
     InputsCalc = InputsCalc << 1;
-    InputsCalc = InputsCalc + (char) NewInputs.InputTempOut24;
+    InputsCalc = InputsCalc + (char) NewInputs.InputTempOutHigh;
     InputsCalc = InputsCalc << 1;
-    InputsCalc = InputsCalc + (char) NewInputs.InputTempInt22;
+    InputsCalc = InputsCalc + (char) NewInputs.InputTempInt;
     InputsCalc = InputsCalc << 1;
     InputsCalc = InputsCalc + (char) NewInputs.InputTempCheminee;
 

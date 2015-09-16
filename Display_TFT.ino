@@ -20,9 +20,9 @@ void DisplaySD(void)
   char CharArray[16];
   char* filename;
   condition = 0;
-  if (NewInputs.InputTempOut24 == true)condition += 8 ;
-  if (NewInputs.InputTempOut15 == true)condition += 4 ;
-  if (NewInputs.InputTempInt22 == true)condition += 2 ;
+  if (NewInputs.InputTempOutHigh == true)condition += 8 ;
+  if (NewInputs.InputTempOutLow == true)condition += 4 ;
+  if (NewInputs.InputTempInt == true)condition += 2 ;
   if (NewInputs.InputTempCheminee == true )condition += 1 ;
 
   filename = CharArray;
@@ -151,11 +151,11 @@ void DisplayNoSD(void)
   //************* PARTIE INPUTS ********************
 
   //Rectangle Exterieur
-  if (NewInputs.InputTempOut15 == false)
+  if (NewInputs.InputTempOutLow == false)
   {
     color = 0x001F;
   }
-  else if (NewInputs.InputTempOut24 == false)
+  else if (NewInputs.InputTempOutHigh == false)
   {
     color = 0x8408;
   }
@@ -166,7 +166,7 @@ void DisplayNoSD(void)
   tft.fillRect(0, 0, tft.width() / 3, (tft.height() / 7) * 2, color);
 
   // Rectangle Intérieur
-  if (NewInputs.InputTempInt22 == false)
+  if (NewInputs.InputTempInt == false)
   {
     color = 0x001F;
   }
@@ -192,7 +192,7 @@ void DisplayNoSD(void)
   tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
   tft.println("Ext :");
   tft.setCursor(20, 10 + (tft.height() / 7));
-  if (NewInputs.InputTempOut15 == false)
+  if (NewInputs.InputTempOutLow == false)
   {
     tft.setTextSize(2);
     tft.print("F"); tft.setTextSize(1);
@@ -201,7 +201,7 @@ void DisplayNoSD(void)
     tft.print(" - ");
     tft.print("C");
   }
-  else if (NewInputs.InputTempOut24 == false)
+  else if (NewInputs.InputTempOutHigh == false)
   {
     tft.setTextSize(1);
     tft.print("F");
@@ -226,7 +226,7 @@ void DisplayNoSD(void)
   tft.setTextColor(ILI9340_BLACK);  tft.setTextSize(2);
   tft.println("Int :");
   tft.setCursor(tft.width() / 3 + 1 + 20, 10 + (tft.height() / 7));
-  if (NewInputs.InputTempInt22 == false)
+  if (NewInputs.InputTempInt == false)
   {
     tft.print("Froid");
   }

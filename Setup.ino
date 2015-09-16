@@ -15,9 +15,9 @@ void setup() {
 #endif
 
   // Pins Thermostats
-  pinMode(T_EXT_15, INPUT);
-  pinMode(T_EXT_24, INPUT);
-  pinMode(T_INT_22, INPUT);
+  pinMode(T_EXT_LOW, INPUT);
+  pinMode(T_EXT_HIGH, INPUT);
+  pinMode(T_INT, INPUT);
   pinMode(T_CHEMINEE, INPUT);
 
   //Pins Bypass
@@ -53,9 +53,9 @@ void setup() {
   Mode = NORMAL;
   Reglage = NORM;
 
-  NewInputs.InputTempOut15 = TempOver(T_EXT_15);
-  NewInputs.InputTempOut24 = TempOver(T_EXT_24);
-  NewInputs.InputTempInt22 = TempOver(T_INT_22);
+  NewInputs.InputTempOutLow = TempOver(T_EXT_LOW);
+  NewInputs.InputTempOutHigh = TempOver(T_EXT_HIGH);
+  NewInputs.InputTempInt = TempOver(T_INT);
   NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
   OldInputs = NewInputs;
 

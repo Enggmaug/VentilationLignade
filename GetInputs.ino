@@ -17,44 +17,44 @@ bool GetInputs() {
 
     if (Mode == MAINTENANCE)
     {
-      if (strncmp((char *)SerialRx, "T_EXT_15 ON", 11) == 0)
+      if (strncmp((char *)SerialRx, "T_EXT_LOW ON", 11) == 0)
       {
-        NewInputs.InputTempOut15 = true;
-        if (NewInputs.InputTempOut24)
-          Serial.println("Temp. exterieure > 24Deg");
+        NewInputs.InputTempOutLow = true;
+        if (NewInputs.InputTempOutHigh)
+          Serial.println("Temp. exterieure Chaude");
         else
-          Serial.println("Temp. exterieure entre 15 et 24Deg");
+          Serial.println("Temp. exterieure Moyenne");
       }
-      else if (strncmp((char *)SerialRx, "T_EXT_15 OFF", 12) == 0)
+      else if (strncmp((char *)SerialRx, "T_EXT_LOW OFF", 12) == 0)
       {
-        NewInputs.InputTempOut15 = false;
-        NewInputs.InputTempOut24 = false;
-        Serial.println("Temp. exterieure < 15Deg");
+        NewInputs.InputTempOutLow = false;
+        NewInputs.InputTempOutHigh = false;
+        Serial.println("Temp. exterieure Froide");
       }
-      else if (strncmp((char *)SerialRx, "T_EXT_24 ON", 11) == 0)
+      else if (strncmp((char *)SerialRx, "T_EXT_HIGH ON", 11) == 0)
       {
-        NewInputs.InputTempOut24 = true;
-        NewInputs.InputTempOut15 = true;
-        Serial.println("Temp. exterieure > 24Deg");
+        NewInputs.InputTempOutHigh = true;
+        NewInputs.InputTempOutLow = true;
+        Serial.println("Temp. exterieure Chaude");
       }
-      else if (strncmp((char *)SerialRx, "T_EXT_24 OFF", 12) == 0)
+      else if (strncmp((char *)SerialRx, "T_EXT_HIGH OFF", 12) == 0)
       {
-        NewInputs.InputTempOut24 = false;
-        if (NewInputs.InputTempOut15)
-          Serial.println("Temp. exterieure entre 15 et 24Deg");
+        NewInputs.InputTempOutHigh = false;
+        if (NewInputs.InputTempOutLow)
+          Serial.println("Temp. exterieure Moyenne");
         else
-          Serial.println("Temp. exterieure < 15Deg");
+          Serial.println("Temp. exterieure Froide");
 
       }
-      else if (strncmp((char *)SerialRx, "T_INT_22 ON", 11) == 0)
+      else if (strncmp((char *)SerialRx, "T_INT ON", 11) == 0)
       {
-        NewInputs.InputTempInt22 = true;
-        Serial.println("Temp. interieure > 22Deg");
+        NewInputs.InputTempInt = true;
+        Serial.println("Temp. interieure Chaude");
       }
-      else if (strncmp((char *)SerialRx, "T_INT_22 OFF", 12) == 0)
+      else if (strncmp((char *)SerialRx, "T_INT OFF", 12) == 0)
       {
-        NewInputs.InputTempInt22 = false;
-        Serial.println("Temp. interieure < 22Deg");
+        NewInputs.InputTempInt = false;
+        Serial.println("Temp. interieure Froide");
       }
       else if (strncmp((char *)SerialRx, "T_CHEMINEE ON", 13) == 0)
       {
@@ -70,7 +70,7 @@ bool GetInputs() {
       {
         Serial.println("Commande non reconnue");
         Serial.println("Utiliser : THERMOSTAT ETAT");
-        Serial.println("    Avec : THERMOSTAT = T_EXT_15 / T_EXT_24 / T_INT_22 / T_CHEMINEE");
+        Serial.println("    Avec : THERMOSTAT = T_EXT_LOW / T_EXT_HIGH / T_INT / T_CHEMINEE");
         Serial.println("           ETAT       = ON / OFF");
       }
 
@@ -96,18 +96,28 @@ bool GetInputs() {
 
   if (Mode == NORMAL)
   {
-    NewInputs.InputTempOut15 = TempOver(T_EXT_15);
-    NewInputs.InputTempOut24 = TempOver(T_EXT_24);
-    NewInputs.InputTempInt22 = TempOver(T_INT_22);
+    NewInputs.InputTempOutLow = TempOver(T_EXT_LOW);
+    NewInputs.InputTempOutHigh = TempOver(T_EXT_HIGH);
+    NewInputs.InputTempInt = TempOver(T_INT);
     NewInputs.InputTempCheminee = TempOver(T_CHEMINEE);
   }
 
-  InputsChanged = (NewInputs.InputTempOut15 ^ OldInputs.InputTempOut15);
-  InputsChanged = InputsChanged | (NewInputs.InputTempOut24 ^ OldInputs.InputTempOut24);
-  InputsChanged = InputsChanged | (NewInputs.InputTempInt22 ^ OldInputs.InputTempInt22);
+  InputsChanged = (NewInputs.InputTempOutLow ^ OldInputs.InputTempOutLow);
+  InputsChanged = InputsChanged | (NewInputs.InputTempOutHigh ^ OldInputs.InputTempOutHigh);
+  InputsChanged = InputsChanged | (NewInputs.InputTempInt ^ OldInputs.InputTempInt);
   InputsChanged = InputsChanged | (NewInputs.InputTempCheminee ^ OldInputs.InputTempCheminee);
   OldInputs = NewInputs;
 
   return InputsChanged;
 
 }
+
+
+
+bool GetTemp(int Thermostat)
+{
+ // Fonction à écrire : on retourne vrai si la température est au dessus du seuil défini pour cette temp.
+return (false);
+
+}
+
