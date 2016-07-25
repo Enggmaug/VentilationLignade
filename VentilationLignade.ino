@@ -36,7 +36,7 @@
 #define SPI_MOSI       11
 #define SPI_MISO       12
 #define SPI_CLK        13
-#define V12_CHECK      14
+#define T_INT          14
 #define SDCARD_CS      15
 #define ENDSTOP_2_2    16
 #define ENDSTOP_2_1    17
@@ -49,7 +49,7 @@
 #define COD_SW         24
 #define COD_CLK        25
 #define RX_SPARE       26
-#define T_INT          27
+#define SPARE          27
 #define V12_2_ON       28
 #define SCL1_SPARE     29
 #define SDA1_SPARE     30
