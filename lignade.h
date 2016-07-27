@@ -76,4 +76,4 @@ void SaveDate(void);
 void RecallDate(void);
 void SaveTime(void);
 void RecallTime(void);
-float ConvertThermistorValue(int input);
+float ConvertThermistorValue(unsigned int input);

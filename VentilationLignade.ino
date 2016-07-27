@@ -239,18 +239,12 @@ float Historiques[NB_TEMP - 1][NB_TYP_HISTO][SCREEN_WIDTH] = {0};
 
 
 typedef struct ThermistorEntry{
-  int Reading;
+  unsigned int Reading;
   float Temperature;
 } ThermistorEntry;
 
 const ThermistorEntry ThermistorTable[] = 
 {
-{999, -39.44},
-{999, -39.44},
-{999, -39.44},
-{999, -39.44},
-{999, -39.44},
-{999, -39.44},
 {999, -39.44},
 {997, -38.33},
 {994, -37.22},
@@ -364,15 +358,5 @@ const ThermistorEntry ThermistorTable[] =
 {92, 82.78 },
 {89, 83.89 },
 {86, 85.00 },
-{83, 86.11 },
-{83, 86.11 },
-{83, 86.11 },
-{83, 86.11 },
-{83, 86.11 },
-{83, 86.11 },
-{83, 86.11 },
 {83, 86.11 }};
-
-
-
 

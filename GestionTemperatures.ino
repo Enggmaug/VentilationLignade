@@ -117,22 +117,64 @@ float Moyenne (float *pt_tab, unsigned int EndIndex, unsigned int NbOfElements)
 /*---------------------------------------------------------------------------------------------*/
 /*        Convertion d'une lecture de thermistance vers une température                        */
 /*---------------------------------------------------------------------------------------------*/
-float ConvertThermistorValue(int input)
+float ConvertThermistorValue(unsigned int input)
 {
-  int index = 64;
-  int Dichotomie;
+    signed int direction;
+    signed int Ecart_X;
+    float      Ecart_Y;
+    signed int EcartInput;
+    unsigned int index;
+    unsigned int Dichotomie;
 
-  for (Dichotomie = 64; Dichotomie > 0; Dichotomie >> 1)
-  {
-    if (input == ThermistorTable[index].Reading) return(ThermistorTable[index].Temperature);
-    else if (input > ThermistorTable[index].Reading) index -= Dichotomie;
-    else if (input < ThermistorTable[index].Reading) index += Dichotomie;
-  }
-  
-  if (input > ThermistorTable[index].Reading) index = index-1;
-    
-  if (input > ThermistorTable[index].Reading) Serial.println(index);
-  if (input < ThermistorTable[index+1].Reading) Serial.println(index);
+    float Result;
+
+//Robustesse
+    if (input > ThermistorTable[0].Reading)
+        return -666.00;
+    if (input < ThermistorTable[sizeof(ThermistorTable)/sizeof(ThermistorEntry)-1].Reading)
+        return 666.00;
+
+//On se rapproche par Dichotomie
+    index = 64;
+    for (Dichotomie = 32; Dichotomie > 0 ; Dichotomie=Dichotomie >> 1)
+    {
+        if (input == ThermistorTable[index].Reading)
+        {
+            break;
+        }
+        else if (input > ThermistorTable[index].Reading)
+        {
+            index = index - (Dichotomie);
+        }
+        else if (input < ThermistorTable[index].Reading)
+        {
+            index = index + (Dichotomie);
+        }
+    }
+
+//On est à côté de l'indice voullu, mais il faut savoir su quel Range calculer
+    if (input == ThermistorTable[index].Reading)
+        direction=index;
+    else if (input < ThermistorTable[index].Reading)
+    {
+        direction = index + 1;
+    }
+    else
+    {
+        direction = index - 1;
+    }
+
+//Interpolation linéaire
+    Ecart_X = ThermistorTable[direction].Reading - ThermistorTable[index].Reading;
+    Ecart_Y = ThermistorTable[direction].Temperature - ThermistorTable[index].Temperature;
+
+    EcartInput= input - ThermistorTable[index].Reading;
+
+    if (Ecart_X == 0)
+        Result= ThermistorTable[index].Temperature;
+    else
+    {
+        Result = ThermistorTable[index].Temperature + ((float)(EcartInput)/(float)(Ecart_X))*Ecart_Y;
+    }
+    return (Result);
 }
-
-
