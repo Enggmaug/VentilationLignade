@@ -173,6 +173,7 @@ float Hysteresis[NB_MODES][NB_TEMP] = {DEFAULT_HYSTERESIS, DEFAULT_HYSTERESIS, D
 float MinMax[2][NB_TEMP]            = {DEFAULT_SEUILS, DEFAULT_SEUILS};
 float Temperatures[NB_TEMP];
 bool TemperatureDepasseSeuil[NB_TEMP];
+bool SeuilTriggered;
 
 
 // Si carte SD présente

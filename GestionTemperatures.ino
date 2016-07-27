@@ -48,13 +48,16 @@ float ReadTemperature(int AnalogPinNumber)
 void CheckTemperatures (void)
 {
   int idx;
+  SeuilTriggered = false;
+    
   for (idx = 0; idx < NB_TEMP; idx++)
-  {
+  {    
     if (TemperatureDepasseSeuil[idx] == true)
     {
       if (Temperatures[idx] < ( Seuils[Reglage][idx] - Hysteresis[Reglage][idx]))
       {
         TemperatureDepasseSeuil[idx] = false;
+        SeuilTriggered = true;
       }
     }
     else
@@ -62,6 +65,7 @@ void CheckTemperatures (void)
       if (Temperatures[idx] > ( Seuils[Reglage][idx] + Hysteresis[Reglage][idx]))
       {
         TemperatureDepasseSeuil[idx] = true;
+        SeuilTriggered = true;
       }
     }
 
