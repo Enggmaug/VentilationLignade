@@ -14,15 +14,17 @@ void GetTemperatures(void)
   {
     Releves[idx][IndexMoyenne] = ReadTemperature(PinNumber[idx+1]);
   }
+
+  IndexMoyenne = IndexMoyenne +1;
   
   if (IndexMoyenne >= TEMP_SAMPLES_NB)
   {
      for (idx = 1; idx < NB_TEMP ; idx ++)
     {
       Temperatures[idx] = Moyenne( &Releves[idx][0], TEMP_SAMPLES_NB -1, TEMP_SAMPLES_NB);
-      
     }
       Temperatures[0] = Temperatures[1];  // Les Deux premieres températures sont la même, car on a 2 seuils pour l'exterieur
+      IndexMoyenne = 0;
   }
 }
 
