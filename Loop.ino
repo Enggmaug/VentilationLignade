@@ -55,6 +55,11 @@ void loop(void)
     if (counter % 270 == 0 ) // 270 seconds = 4.5 minutes = 320 points sur 24h
     {      
       CheckTemperatures();
+
+      if (SeuilTriggered == true)
+      {
+        ManageOutputGoal(counter);
+      }
     
       //Remplissage des Historiques
       for (idx = 0; idx < NB_TYP_HISTO ; idx ++)

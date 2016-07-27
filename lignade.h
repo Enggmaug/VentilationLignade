@@ -77,3 +77,6 @@ void RecallDate(void);
 void SaveTime(void);
 void RecallTime(void);
 float ConvertThermistorValue(unsigned int input);
+unsigned int ManageOutputGoal(unsigned int counter);
+
+
