@@ -110,12 +110,12 @@ void SetMode(int Direction)
   switch (Reglage)
   {
     case ETE:
-      Reglage = Direction > 0 ? MI_SAISON : HIVERS;
+      Reglage = Direction > 0 ? MI_SAISON : HIVER;
       break;
     case MI_SAISON:
-      Reglage = Direction > 0 ? HIVERS : ETE;
+      Reglage = Direction > 0 ? HIVER : ETE;
       break;
-    case HIVERS :
+    case HIVER :
       Reglage = Direction > 0 ? ETE : MI_SAISON;
       break;
     default:

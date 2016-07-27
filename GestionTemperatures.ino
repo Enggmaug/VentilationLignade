@@ -49,8 +49,11 @@ void CheckTemperatures (void)
 {
   int idx;
   SeuilTriggered = false;
+
+//Le seuil de température extérieure basse n'est pas réglable : c'est la température du puit Canadien
+  Seuils[Reglage][EXTERIEUR_L] = Temperatures[PUIT_CANAD];
     
-  for (idx = 0; idx < NB_TEMP; idx++)
+  for (idx = 0; idx < NB_TEMP-1; idx++)
   {    
     if (TemperatureDepasseSeuil[idx] == true)
     {

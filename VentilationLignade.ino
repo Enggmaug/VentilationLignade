@@ -4,12 +4,14 @@
 #include <SD.h>
 #include "ds3234.h"
 #include "lignade.h"
+#include "Thermistor.h"
+#include "Outputs.h"
 
 // DEFINE
 #define NB_CAR_LIGNE   24
 #define NB_CAR_T       9
-#define DEFAULT_SEUILS {15.0, 24.0, 22.0, 40.0, 16.0}
-#define DEFAULT_HYSTERESIS {0.0, 0.0, 0.0, 0.0, 0.0}
+#define DEFAULT_SEUILS {15.0, 24.0, 22.0, 40.0}
+#define DEFAULT_HYSTERESIS {0.0, 0.0, 0.0, 0.0}
 #define NB_TEMP 5
 #define EXTERIEUR_L 0
 #define EXTERIEUR_H 1
@@ -19,7 +21,6 @@
 #define NB_TYP_HISTO  4  // Jours / Semaines / Mois / Année
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
-#define NB_MODES    3
 #define TEMP_SAMPLES_NB 10
 
 //DEFINE des Numeros de Pins
@@ -109,19 +110,19 @@ const char   tab_MenuMain[ct_MenuMainNbItems][NB_CAR_LIGNE]       =  {"MENU"    
 const FctPtr tab_MenuMainFonct[ct_MenuMainNbItems]                =  {None              , SetMode        , GotoDeclenche   , GotoHisto      , GotoMaintenance  , GotoSetDateHeure   , GotoDisplayTemp };
 /*-*/ bool   tab_MenuMainEnable[ct_MenuMainNbItems]               =  {true              , true           , true            , true           , true             , true               , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
-const char   tab_MenuMode[ct_MenuModeNbItems][NB_CAR_LIGNE]       =  {"ETE"             , "MI-SAISON"    , "HIVERS"        }; //            |                  |                    |                 |
+const char   tab_MenuMode[ct_MenuModeNbItems][NB_CAR_LIGNE]       =  {"ETE"             , "MI-SAISON"    , "HIVER"        }; //            |                  |                    |                 |
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
 const char   tab_MenuDeclenche[ct_MenuDeclNbItems][NB_CAR_LIGNE]  =  {"REGLAGES SEUILS" , "SEUILS"       , "SENSIBILITE"   , "RETOUR"       }; //              |                    |                 |
 const FctPtr tab_MenuDeclencheFonct[ct_MenuDeclNbItems]           =  {None              , GotoSeuils     , GotoHysteresis  , GotoMainMenu   }; //              |                    |                 |
 /*-*/ bool   tab_MenuDeclencheEnable[ct_MenuDeclNbItems]          =  {true              , true           , true            , true           }; //              |                    |                 |
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
-const char   tab_MenuSeuils[ct_MenuSeuilsNbItems][NB_CAR_LIGNE]   =  {"REGLAGE SEUILS"  , "T. EXT. BASSE", "T. EXT. HAUTE" , "T. INTERIEURE", "T. CHEMINEE"    , "T. PUIT C."       , "RETOUR"        };
-const FctPtr tab_MenuSeuilsFonct[ct_MenuSeuilsNbItems]            =  {None              , SetOnOff       , SetOnOff        , SetOnOff       , SetOnOff         , SetOnOff           , SaveYesNo       };
-/*-*/ bool   tab_MenuSeuilsEnable[ct_MenuSeuilsNbItems]           =  {true              , true           , true            , true           , true             , true               , true            };
+const char   tab_MenuSeuils[ct_MenuSeuilsNbItems][NB_CAR_LIGNE]   =  {"REGLAGE SEUILS"  , ""             , "T. EXT. HAUTE" , "T. INTERIEURE", "T. CHEMINEE"    , ""                 , "RETOUR"        };
+const FctPtr tab_MenuSeuilsFonct[ct_MenuSeuilsNbItems]            =  {None              , None           , SetOnOff        , SetOnOff       , SetOnOff         , None               , SaveYesNo       };
+/*-*/ bool   tab_MenuSeuilsEnable[ct_MenuSeuilsNbItems]           =  {true              , false          , true            , true           , true             , false              , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
-const char   tab_Hysteresis[ct_HysteresisNbItems][NB_CAR_LIGNE]   =  {"SENSIBILITE"     , "T. EXT. BASSE", "T. EXT. HAUTE" , "T. INTERIEURE", "T. CHEMINEE"    , "T. PUIT C."       , "RETOUR"        };
-const FctPtr tab_HysteresisFonct[ct_HysteresisNbItems]            =  {None              , SetOnOff       , SetOnOff        , SetOnOff       , SetOnOff         , SetOnOff           , SaveYesNo       };
-/*-*/ bool   tab_HysteresisEnable[ct_HysteresisNbItems]           =  {true              , true           , true            , true           , true             , true               , true            };
+const char   tab_Hysteresis[ct_HysteresisNbItems][NB_CAR_LIGNE]   =  {"SENSIBILITE"     , "T. EXT. BASSE", "T. EXT. HAUTE" , "T. INTERIEURE", "T. CHEMINEE"    , ""                 , "RETOUR"        };
+const FctPtr tab_HysteresisFonct[ct_HysteresisNbItems]            =  {None              , SetOnOff       , SetOnOff        , SetOnOff       , SetOnOff         , None               , SaveYesNo       };
+/*-*/ bool   tab_HysteresisEnable[ct_HysteresisNbItems]           =  {true              , true           , true            , true           , true             , false              , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
 const char   tab_MenuHist[ct_MenuHistNbItems][NB_CAR_LIGNE]       =  {"HISTORIQUE"      , "COURBES HISTO", "MIN/MAX"       , "RESET COURBES", "RESET MIN/MAX"  , "RESET TOUT"       , "RETOUR"        };
 const FctPtr tab_MenuHistFonct[ct_MenuHistNbItems]                =  {None              , GotoCourbes    , GotoMinMax      , GotoResetScreen, GotoResetScreen  , GotoResetScreen    , GotoMainMenu    };
@@ -168,11 +169,11 @@ const char* BlankLine = "                       ";
 char tab_MenuTemp[ct_NbItemMax][NB_CAR_LIGNE];
 
 //Seuils et Température par défaut
-float Seuils[NB_MODES][NB_TEMP]     = {DEFAULT_SEUILS, DEFAULT_SEUILS, DEFAULT_SEUILS};
-float Hysteresis[NB_MODES][NB_TEMP] = {DEFAULT_HYSTERESIS, DEFAULT_HYSTERESIS, DEFAULT_HYSTERESIS};
+float Seuils[NB_MODES][NB_TEMP-1]     = {DEFAULT_SEUILS, DEFAULT_SEUILS, DEFAULT_SEUILS};
+float Hysteresis[NB_MODES][NB_TEMP-1] = {DEFAULT_HYSTERESIS, DEFAULT_HYSTERESIS, DEFAULT_HYSTERESIS};
 float MinMax[2][NB_TEMP]            = {DEFAULT_SEUILS, DEFAULT_SEUILS};
 float Temperatures[NB_TEMP];
-bool TemperatureDepasseSeuil[NB_TEMP];
+bool TemperatureDepasseSeuil[NB_TEMP-1];
 bool SeuilTriggered;
 
 
@@ -224,7 +225,7 @@ enum CodeurActions
 enum Reglages {
   ETE = 0,
   MI_SAISON = 1,
-  HIVERS = 2
+  HIVER = 2
 } Reglage;
 
 //Definition de la date/heure courante
@@ -236,128 +237,13 @@ bool InhibRTCAlarms = false;
 
 unsigned int IndexHistoriques[NB_TYP_HISTO] = {0};
 
-float Historiques[NB_TEMP - 1][NB_TYP_HISTO][SCREEN_WIDTH] = {0};
+float Historiques[NB_TEMP - 1][NB_TYP_HISTO][SCREEN_WIDTH] = {0.0};
+
+extern const ThermistorEntry ThermistorTable[];
+
+Bypass   ByPass_DoubleFlux;
+Bypass   ByPass_Cave;
 
 
-typedef struct ThermistorEntry{
-  unsigned int Reading;
-  float Temperature;
-} ThermistorEntry;
 
-const ThermistorEntry ThermistorTable[] = 
-{
-{999, -39.44},
-{997, -38.33},
-{994, -37.22},
-{992, -36.11},
-{990, -35.00},
-{987, -33.89},
-{985, -32.78},
-{982, -31.67},
-{979, -30.56},
-{975, -29.44},
-{972, -28.33},
-{968, -27.22},
-{964, -26.11},
-{960, -25.00},
-{956, -23.89},
-{952, -22.78},
-{947, -21.67},
-{942, -20.56},
-{936, -19.44},
-{931, -18.33},
-{925, -17.22},
-{919, -16.11},
-{913, -15.00},
-{906, -13.89},
-{899, -12.78},
-{892, -11.67},
-{884, -10.56},
-{876, -9.44 },
-{868, -8.33 },
-{860, -7.22 },
-{851, -6.11 },
-{842, -5.00 },
-{832, -3.89 },
-{823, -2.78 },
-{813, -1.67 },
-{802, -0.56 },
-{792, 0.56  },
-{781, 1.67  },
-{770, 2.78  },
-{758, 3.89  },
-{747, 5.00  },
-{735, 6.11  },
-{723, 7.22  },
-{710, 8.33  },
-{698, 9.44  },
-{685, 10.56 },
-{672, 11.67 },
-{659, 12.78 },
-{646, 13.89 },
-{633, 15.00 },
-{619, 16.11 },
-{606, 17.22 },
-{593, 18.33 },
-{579, 19.44 },
-{566, 20.56 },
-{552, 21.67 },
-{539, 22.78 },
-{525, 23.89 },
-{512, 25.00 },
-{499, 26.11 },
-{486, 27.22 },
-{473, 28.33 },
-{460, 29.44 },
-{447, 30.56 },
-{434, 31.67 },
-{422, 32.78 },
-{410, 33.89 },
-{398, 35.00 },
-{386, 36.11 },
-{374, 37.22 },
-{363, 38.33 },
-{352, 39.44 },
-{341, 40.56 },
-{330, 41.67 },
-{319, 42.78 },
-{309, 43.89 },
-{299, 45.00 },
-{290, 46.11 },
-{280, 47.22 },
-{271, 48.33 },
-{262, 49.44 },
-{253, 50.56 },
-{245, 51.67 },
-{236, 52.78 },
-{228, 53.89 },
-{221, 55.00 },
-{213, 56.11 },
-{206, 57.22 },
-{199, 58.33 },
-{192, 59.44 },
-{185, 60.56 },
-{179, 61.67 },
-{173, 62.78 },
-{167, 63.89 },
-{161, 65.00 },
-{156, 66.11 },
-{150, 67.22 },
-{145, 68.33 },
-{140, 69.44 },
-{135, 70.56 },
-{130, 71.67 },
-{126, 72.78 },
-{121, 73.89 },
-{117, 75.00 },
-{113, 76.11 },
-{109, 77.22 },
-{106, 78.33 },
-{102, 79.44 },
-{98, 80.56 },
-{95, 81.67 },
-{92, 82.78 },
-{89, 83.89 },
-{86, 85.00 },
-{83, 86.11 }};
 

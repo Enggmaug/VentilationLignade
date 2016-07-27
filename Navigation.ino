@@ -494,7 +494,7 @@ void ChangeItem(int Direction)
 
 
 /*---------------------------------------------------------------------------------------------*/
-/*                         Changement de Mode ETE - MI_SAISON - HIVERS                         */
+/*                         Changement de Mode ETE - MI_SAISON - HIVER                         */
 /*---------------------------------------------------------------------------------------------*/
 void SetMode(void)
 {
@@ -582,9 +582,9 @@ char* AddModeToLine(int idx)
       str = strncat(tab_MenuTemp[idx] + strlen(tab_MenuTemp[idx]), BlankLine, NB_CAR_LIGNE - strlen("MI-SAISON") - strlen(tab_MenuTemp[idx]) - 1);
       str = strcat(tab_MenuTemp[idx], "MI-SAISON");
       break;
-    case HIVERS:
-      str = strncat(tab_MenuTemp[idx] + strlen(tab_MenuTemp[idx]), BlankLine, NB_CAR_LIGNE - strlen("HIVERS") - strlen(tab_MenuTemp[idx]) - 1);
-      str = strcat(tab_MenuTemp[idx], "HIVERS");
+    case HIVER:
+      str = strncat(tab_MenuTemp[idx] + strlen(tab_MenuTemp[idx]), BlankLine, NB_CAR_LIGNE - strlen("HIVER") - strlen(tab_MenuTemp[idx]) - 1);
+      str = strcat(tab_MenuTemp[idx], "HIVER");
       break;
     default:
       Reglage = MI_SAISON;
