@@ -81,5 +81,11 @@ void setup(void)
   TemperatureDepasseSeuil[PUIT_CANAD]  = false;
 
   Reglage = ETE;
+
+    for (int idx = 0; idx < 1024; idx ++)
+  {
+    float dummy;
+    dummy = ConvertThermistorValue(idx);
+  }
 }
 

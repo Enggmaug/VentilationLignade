@@ -7,30 +7,39 @@ void GetTemperatures(void)
   int idx;
   const int PinNumber[NB_TEMP] = {T_EXT, T_EXT, T_INT, T_CHEMINEE, T_PUIT};
 
-  for (idx = 1; idx < NB_TEMP ; idx ++)
+  static unsigned int IndexMoyenne = TEMP_SAMPLES_NB;
+  static float Releves[NB_TEMP-1][TEMP_SAMPLES_NB] = {0.0};
+
+  for (idx = 0; idx < NB_TEMP-1 ; idx ++)
   {
-    Temperatures[idx] = ReadTemperature(PinNumber[idx]);
+    Releves[idx][IndexMoyenne] = ReadTemperature(PinNumber[idx+1]);
   }
-  Temperatures[0] = Temperatures[1];  // Les Deux premieres températures sont la même, car on a 2 seuils pour l'exterieur
+  
+  if (IndexMoyenne >= TEMP_SAMPLES_NB)
+  {
+     for (idx = 1; idx < NB_TEMP ; idx ++)
+    {
+      Temperatures[idx] = Moyenne( &Releves[idx][0], TEMP_SAMPLES_NB -1, TEMP_SAMPLES_NB);
+      
+    }
+      Temperatures[0] = Temperatures[1];  // Les Deux premieres températures sont la même, car on a 2 seuils pour l'exterieur
+  }
 }
 
 float ReadTemperature(int AnalogPinNumber)
 {
-//Temporaire
-  return 20.0;
-  
+  float value;
   if (AnalogPinNumber > 0)
   {
-    float values[5];
+    int reading;
+    reading = analogRead(AnalogPinNumber);
 
-    for (int idx = 0; idx < 5 ; idx ++)
-    {
-      values[idx] = analogRead(AnalogPinNumber);
-    }
-    return (Moyenne(values,4,5));
+    value = ConvertThermistorValue(reading);
   }
   else
-    return (0.0);
+    value= 0.0;
+
+   return (value);
 }
 
 
@@ -104,3 +113,26 @@ float Moyenne (float *pt_tab, unsigned int EndIndex, unsigned int NbOfElements)
   value = value / NbOfElements;
   return (float) value;
 }
+
+/*---------------------------------------------------------------------------------------------*/
+/*        Convertion d'une lecture de thermistance vers une température                        */
+/*---------------------------------------------------------------------------------------------*/
+float ConvertThermistorValue(int input)
+{
+  int index = 64;
+  int Dichotomie;
+
+  for (Dichotomie = 64; Dichotomie > 0; Dichotomie >> 1)
+  {
+    if (input == ThermistorTable[index].Reading) return(ThermistorTable[index].Temperature);
+    else if (input > ThermistorTable[index].Reading) index -= Dichotomie;
+    else if (input < ThermistorTable[index].Reading) index += Dichotomie;
+  }
+  
+  if (input > ThermistorTable[index].Reading) index = index-1;
+    
+  if (input > ThermistorTable[index].Reading) Serial.println(index);
+  if (input < ThermistorTable[index+1].Reading) Serial.println(index);
+}
+
+
