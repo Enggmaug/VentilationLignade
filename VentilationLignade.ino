@@ -3,9 +3,9 @@
 #include "ILI9341_t3.h"
 #include <SD.h>
 #include "ds3234.h"
-#include "lignade.h"
 #include "Thermistor.h"
 #include "Outputs.h"
+#include "lignade.h"
 
 // DEFINE
 #define NB_CAR_LIGNE   24
@@ -102,7 +102,7 @@ const char   tab_DisplayT[ct_DisplayTNbItems][NB_CAR_LIGNE]       =  {"TEMPERATU
 const FctPtr tab_DisplayTFonct[ct_DisplayTNbItems]                =  {GotoMainMenu      } ; //           |                 |                |                  |                    |                 |
 /*-*/ bool   tab_DisplayTEnable[ct_DisplayTNbItems]               =  {true              , true           ,                   true           , true             , true               }; //             |
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
-const char   tab_DispOutputs[ct_DispOutputsNbItems][NB_CAR_LIGNE] =  {"SORTIES"         , "BYPASS1 :"    , "     "         , "BYPASS2 :"    , "     "          , "CHEMINEE :"       , "     "         };
+const char   tab_DispOutputs[ct_DispOutputsNbItems][NB_CAR_LIGNE] =  {"SORTIES"         , "VMC :    "    , "     "         , "INSUFLATION"  , "     "          , "CHEMINEE :"       , "     "         };
 const FctPtr tab_DispOutputsFonct[ct_DispOutputsNbItems]          =  {GotoMainMenu      } ; //           |                 |                |                  |                    |                 |
 /*-*/ bool   tab_DispOutputsEnable[ct_DispOutputsNbItems]         =  {true              , true           , true            , true           , true             , true               , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
@@ -241,8 +241,8 @@ float Historiques[NB_TEMP - 1][NB_TYP_HISTO][SCREEN_WIDTH] = {0.0};
 
 extern const ThermistorEntry ThermistorTable[];
 
-Bypass   ByPass_DoubleFlux;
-Bypass   ByPass_Cave;
+Bypass   ByPass_DoubleFlux = {BYPASS_1_O,BYPASS_1_F,ENDSTOP_1_1,ENDSTOP_1_2,false,false,false,false};
+Bypass   ByPass_Cave       = {BYPASS_2_O,BYPASS_2_F,ENDSTOP_2_1,ENDSTOP_2_2,false,false,false,false};
 
 
 

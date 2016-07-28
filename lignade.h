@@ -77,6 +77,9 @@ void RecallDate(void);
 void SaveTime(void);
 void RecallTime(void);
 float ConvertThermistorValue(unsigned int input);
-unsigned int ManageOutputGoal(unsigned int counter);
-
+void ManageOutputGoal(void);
+void MoveBypass(Bypass *BypassRef,bool goal);
+void AlimOn(void);
+void AlimOff(void);
+void CheckMovement(Bypass* BP);
 

@@ -36,20 +36,25 @@ void loop(void)
   }
   MenuChanged = false;
 
-  //Lecture des températures
+  //Gestion des fin de course Bypass
+  CheckMovement(&ByPass_DoubleFlux);
+  CheckMovement(&ByPass_Cave);
+
+ //Granularité à la Seconde
   if ((RTClockAlarm == true) and (InhibRTCAlarms == false))//or RTC dans les choux et timeout.
   {
 
     RTClockAlarm = false;
     DS3234_clear_a1f(RTCLK_CS);
     
+    //Lecture des températures
     GetTemperatures();
     
     counter++;
     
-    if (counter % 30 == 0 ) // Resynchro toutes les 30 secondes (pour palier à une IT manquée)
+    if (counter % 30 == 0 )
     {      
-      ReadTime();
+      ReadTime(); // Resynchro toutes les 30 secondes (pour palier à une IT manquée)
     }
 
     if (counter % 270 == 0 ) // 270 seconds = 4.5 minutes = 320 points sur 24h
@@ -58,7 +63,7 @@ void loop(void)
 
       if (SeuilTriggered == true)
       {
-        ManageOutputGoal(counter);
+        ManageOutputGoal();
       }
     
       //Remplissage des Historiques

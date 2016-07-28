@@ -5,6 +5,8 @@
 #define DOUBLE_FLUX TURN_ON
 #define SIMPLE_FLUX not(DOUBLE_FLUX)
 
+#define TIMEOUT_BYPASS 30
+
 #define NB_MODES    3
 
 typedef struct
@@ -28,6 +30,8 @@ typedef struct OutputGoal
     bool BypassCave;
     bool BypassVMC;
 } OutputGoal;
+
+OutputGoal g_OutputGoal = {TURN_OFF, TURN_OFF, DOUBLE_FLUX, CLOSE, CLOSE};
 
 const OutputGoal OutputTable[NB_MODES][12] = {
 /*MODE ETE */

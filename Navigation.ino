@@ -52,10 +52,57 @@ void GotoDisplayTemp(void)
 /*-NIVEAU 1------------------------------------------------------------------------------------*/
 /*                     Navigation vers l'ecran d'affichage des sorties                         */
 /*---------------------------------------------------------------------------------------------*/
+    bool VentiloCave;
+    bool VentiloCheminee;
+    bool DoubleFlux;
+    bool BypassCave;
+    bool BypassVMC;
+    
 void GotoDisplayOutputs(void)
 {
+  int idx;
+  char* str;
+  
   MenuChanged = true;
-  EcranEnCours.pt_tab_menu = (char *)&tab_DispOutputs[0][0];
+  for (idx = 0; idx < ct_DispOutputsNbItems; idx ++)
+  {
+    str= strcpy(tab_MenuTemp[idx], tab_DispOutputs[idx]);
+
+    if (idx == 2) // VMC
+    {
+      if (g_OutputGoal.DoubleFlux)
+      {
+      str= strcat(str,"Double F");
+      }
+      else
+      {
+        str= strcat(str,"Simple F");
+      }
+    }
+    else if (idx == 4) // INSUFLATION
+    {
+      if (g_OutputGoal.VentiloCave)
+      {
+      str= strcat(str,"Air Ext.");
+      }
+      else
+      {
+        str= strcat(str,"Puit C.");
+      }
+    }
+    else if (idx == 6) // CHEMINEE
+    {
+      if (g_OutputGoal.VentiloCheminee)
+      {
+      str= strcat(str,"Marche");
+      }
+      else
+      {
+        str= strcat(str,"Arret");
+      }
+    }
+  }
+  EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
   EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_DispOutputsEnable[0];
   EcranEnCours.pt_MenuFonct = (FctPtr *)tab_DispOutputsFonct;
   EcranEnCours.NbItems = ct_DispOutputsNbItems;
@@ -256,7 +303,6 @@ void GotoMinMax(void)
 {
 
   int idx;
-  EcranEnCours.pt_tab_menu = (char *)&tab_MenuMinMax[MIN][0];
   MenuChanged = true;
   strcpy(tab_MenuTemp[0], tab_MenuMinMax[MIN]);
   for (idx = 1; idx < ct_MenuMinMaxNbItems - 1; idx ++)
