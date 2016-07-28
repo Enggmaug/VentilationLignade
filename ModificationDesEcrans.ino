@@ -15,12 +15,18 @@ void SetOnOff(void) // Actionnement et inhibition du changement d'une valeur dan
       EcranEnCours.Droite = SetSeuilPlus;
       EcranEnCours.Gauche = SetSeuilMoins;
     }
-    if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_Hysteresis[0][0]) == 0)
+    else if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_Hysteresis[0][0]) == 0)
     { // Pour le menu des hysteresis
       SetHysteresisPlusMoins (0);
       EcranEnCours.Droite = SetHysteresisPlus;
       EcranEnCours.Gauche = SetHysteresisMoins;
     }
+    else if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_MenuDebug[0][0]) == 0)
+    { // Pour le menu de DEBUG
+      SetTempPlusMoins (0);
+      EcranEnCours.Droite = SetTempPlus;
+      EcranEnCours.Gauche = SetTempMoins;
+    }    
   }
   else // Inhibition du changement
   {
@@ -83,6 +89,35 @@ void SetHysteresisPlusMoins(int Direction)
   else if (Direction < 0) Direction = -1;
 
   Hysteresis[Reglage][EcranEnCours.SelectedItem - 1] += (Direction * 0.1);
+  MenuChanged = false;
+  MenuAction = NONE;
+  AddValToLine(EcranEnCours.SelectedItem);
+  tft.setTextColor(ROUGE);
+  tft.fillRect(0, (tft.height() / ct_NbItemMax) * EcranEnCours.SelectedItem, tft.width(), (tft.height() / ct_NbItemMax), NOIR);
+  tft.setCursor(20, 10 + (tft.height() / ct_NbItemMax) * EcranEnCours.SelectedItem);
+  tft.println( (char*)(EcranEnCours.pt_tab_menu + NB_CAR_LIGNE * EcranEnCours.SelectedItem));
+}
+
+/*---------------------------------------------------------------------------------------------*/
+/*                          GESTION DE MODIFICATION DU DEBUG                                   */
+/*---------------------------------------------------------------------------------------------*/
+void SetTempPlus(void)
+{
+  SetTempPlusMoins(1);
+}
+
+void SetTempMoins(void)
+{
+  SetTempPlusMoins(-1);
+}
+
+void SetTempPlusMoins(int Direction)
+{
+  if (Direction > 0) Direction = 1;
+  else if (Direction < 0) Direction = -1;
+
+  Temperatures[EcranEnCours.SelectedItem - 1] += (Direction * 0.5);
+  Temperatures[0] = Temperatures[1];
   MenuChanged = false;
   MenuAction = NONE;
   AddValToLine(EcranEnCours.SelectedItem);

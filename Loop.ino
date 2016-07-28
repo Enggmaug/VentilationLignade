@@ -25,13 +25,15 @@ void loop(void)
         DisplayMenuScreen();
         DisplayOutputs();
         break;
-      case MAINTENANCE :
-        break;
       case HISTO :
         DisplayCourbeScreen();
         break;
       default :
         break;
+    }
+    if (DebugActivated == true)
+    {
+      tft.drawRect(0,0,tft.width(),tft.height(),ROUGE);
     }
   }
   MenuChanged = false;
@@ -48,7 +50,8 @@ void loop(void)
     DS3234_clear_a1f(RTCLK_CS);
     
     //Lecture des températures
-    GetTemperatures();
+    if (DebugActivated == false)
+      GetTemperatures();
     
     counter++;
     
@@ -64,6 +67,7 @@ void loop(void)
       if (SeuilTriggered == true)
       {
         ManageOutputGoal();
+        MenuChanged = true;
       }
     
       //Remplissage des Historiques

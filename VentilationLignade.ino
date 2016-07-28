@@ -87,7 +87,8 @@ const int ct_MenuHistNbItems    = 7;
 const int ct_MenuCourbesNbItems = 6;
 const int ct_MenuMinMaxNbItems  = 6;
 const int ct_ResetNbItems       = 3;
-const int ct_MaintenanceNbItems = 7;
+const int ct_MaintenanceNbItems = 4;
+const int ct_MenuDebugNbItems   = 7;
 const int ct_MenuDHNbItems      = 6;
 const int ct_MenuDatebItems     = 5;
 const int ct_MenuHeureNbItems   = 4;
@@ -140,9 +141,13 @@ const char   tab_Reset[ct_ResetNbItems][NB_CAR_LIGNE]             =  {"RESET"   
 const FctPtr tab_ResetFonct[ct_ResetNbItems]                      =  {None              , Reset          , GotoHisto       }; //            |                  |                    |                 |
 /*-*/ bool   tab_ResetEnable[ct_ResetNbItems]                     =  {true              , true           , true            }; //            |                  |                    |                 |
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
-const char   tab_MenuMaint[ct_MaintenanceNbItems][NB_CAR_LIGNE]   =  {"MAINTENANCE"     , "TESTS SYSTEME", "FORCER TEMPER.", "LECT. ENTREES", "FORCER SORTIES" , ""                 , "RETOUR"        };
-const FctPtr tab_MenuMaintFonct[ct_MaintenanceNbItems]            =  {None              , BITE           , None            , None           , None             , None               , GotoMainMenu    };
-/*-*/ bool   tab_MenuMaintEnable[ct_MaintenanceNbItems]           =  {true              , true           , true            , false          , true             , false              , true            };
+const char   tab_MenuMaint[ct_MaintenanceNbItems][NB_CAR_LIGNE]   =  {"MAINTENANCE"     , "NORMAL"       , "FORCER TEMPER.", "RETOUR"       }; //              |                    |                 |
+const FctPtr tab_MenuMaintFonct[ct_MaintenanceNbItems]            =  {None              , DebugOnOff     , ShowChangeTemp  , GotoMainMenu   }; //              |                    |                 |
+/*-*/ bool   tab_MenuMaintEnable[ct_MaintenanceNbItems]           =  {true              , false          , false           , true           }; //              |                    |                 |
+//-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
+const char   tab_MenuDebug[ct_MenuDebugNbItems][NB_CAR_LIGNE]     =  {"DEBUG"           , ""             , "T. EXTERIEURE" , "T. INTERIEURE", "T. CHEMINEE"    , "T. PUIT CAN"      , "RETOUR"        };
+const FctPtr tab_MenuDebugFonct[ct_MenuDebugNbItems]              =  {None              , None           , SetOnOff        , SetOnOff       , SetOnOff         , SetOnOff           , GotoMaintenance };
+/*-*/ bool   tab_MenuDebugEnable[ct_MenuDebugNbItems]             =  {true              , false          , true            , true           , true             , false              , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
 const char   tab_MenuDateHeure[ct_MenuDHNbItems][NB_CAR_LIGNE]    =  {"DATE / HEURE"    , "REGLER DATE"  , "DATE ICI"      , "REGLER HEURE" , "HEURE ICI"      , "RETOUR"           }; //             |
 const FctPtr tab_MenuDateHeureFonct[ct_MenuDHNbItems]             =  {None              , GotoSetDate    , None            , GotoSetHeure   , None             , GotoMainMenu       }; //             |
@@ -189,7 +194,6 @@ typedef enum
   MENU,
   TEMPERATURES,
   SORTIES,
-  MAINTENANCE,
   HISTO
 } ScreenType;
 
@@ -244,6 +248,6 @@ extern const ThermistorEntry ThermistorTable[];
 Bypass   ByPass_DoubleFlux = {BYPASS_1_O,BYPASS_1_F,ENDSTOP_1_1,ENDSTOP_1_2,false,false,false,false};
 Bypass   ByPass_Cave       = {BYPASS_2_O,BYPASS_2_F,ENDSTOP_2_1,ENDSTOP_2_2,false,false,false,false};
 
-
+bool DebugActivated = false;
 
 

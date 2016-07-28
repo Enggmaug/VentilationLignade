@@ -325,7 +325,13 @@ void GotoMinMax(void)
 /*---------------------------------------------------------------------------------------------*/
 void GotoResetScreen(void)
 {
+  int idx;
   MenuChanged = true;
+  strcpy(tab_MenuTemp[0], tab_MenuMinMax[MIN]);
+  for (idx = 1; idx < ct_MenuMinMaxNbItems - 1; idx ++)
+  {
+    AddValToLine(idx);
+  }
   EcranEnCours.pt_tab_menu = (char *)&tab_Reset[0][0];
   EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_ResetEnable[0];
   EcranEnCours.pt_MenuFonct = (FctPtr *)tab_ResetFonct;
@@ -341,9 +347,53 @@ void GotoResetScreen(void)
 /*---------------------------------------------------------------------------------------------*/
 void GotoMaintenance(void)
 {
+  int idx ;
+  char* str;
 
+  MenuChanged = true;
+  for(idx = 0;idx<ct_MaintenanceNbItems;idx++)
+  {
+    str = &tab_MenuTemp[idx][0];
+    if(idx == 1)
+    {
+      if (DebugActivated == false)
+      {
+         str= strcpy(tab_MenuTemp[idx],"NORMAL");
+      }
+      else
+      {
+        str= strcpy(tab_MenuTemp[idx],"DEBUG");
+      }
+    }
+    else
+    {
+      str= strcpy(tab_MenuTemp[idx], tab_MenuMaint[idx]);
+    }
+  }
 }
-
+/*-NIVEAU 3------------------------------------------------------------------------------------*/
+/*             Navigation vers l'ecran de changement des Temp en mode Debug                    */
+/*---------------------------------------------------------------------------------------------*/
+void ShowChangeTemp(void)
+{
+  int idx;
+  MenuChanged = true;
+  strcpy(tab_MenuTemp[0], tab_MenuDebug[0]);
+  for (idx = 1; idx < ct_MenuDebugNbItems - 1; idx ++)
+  {
+    AddValToLine(idx);
+  }
+  strcpy(tab_MenuTemp[ct_MenuDebugNbItems - 1], tab_MenuSeuils[ct_MenuDebugNbItems - 1]);
+  EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
+  EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_MenuDebugEnable[0];
+  EcranEnCours.pt_MenuFonct = (FctPtr *)tab_MenuDebugFonct;
+  EcranEnCours.NbItems = ct_MenuDebugNbItems;
+  EcranEnCours.SelectedItem = 1;
+  EcranEnCours.Droite = Suivant;
+  EcranEnCours.Gauche = Precedent;
+  EcranEnCours.Select = EcranEnCours.pt_MenuFonct[EcranEnCours.SelectedItem];
+  EcranEnCours.TypeEcran = MENU;
+}
 /*-NIVEAU 2------------------------------------------------------------------------------------*/
 /*                     Navigation vers l'ecran de réglage Date/Heure                           */
 /*---------------------------------------------------------------------------------------------*/
