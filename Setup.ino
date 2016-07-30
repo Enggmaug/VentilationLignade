@@ -23,7 +23,7 @@ void setup(void)
   SdCardPresent = SD.begin(SDCARD_CS);
   tft.begin();
 
-  tft.setRotation(3);
+  tft.setRotation(1);
 
   MenuChanged = true;
   Reglage = MI_SAISON;

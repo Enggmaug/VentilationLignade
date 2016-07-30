@@ -145,7 +145,7 @@ const char   tab_MenuMaint[ct_MaintenanceNbItems][NB_CAR_LIGNE]   =  {"MAINTENAN
 const FctPtr tab_MenuMaintFonct[ct_MaintenanceNbItems]            =  {None              , DebugOnOff     , ShowChangeTemp  , GotoMainMenu   }; //              |                    |                 |
 /*-*/ bool   tab_MenuMaintEnable[ct_MaintenanceNbItems]           =  {true              , true           , true            , true           }; //              |                    |                 |
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
-const char   tab_MenuDebug[ct_MenuDebugNbItems][NB_CAR_LIGNE]     =  {"DEBUG"           , ""             , "T. EXTERIEURE" , "T. INTERIEURE", "T. CHEMINEE"    , "T. PUIT CAN"      , "RETOUR"        };
+const char   tab_MenuDebug[ct_MenuDebugNbItems][NB_CAR_LIGNE]     =  {"DEBUG"           , ""             , "T. EXTERIEURE" , "T. INTERIEURE", "T. PUIT CAN"    , "T. CHEMINEE"      , "RETOUR"        };
 const FctPtr tab_MenuDebugFonct[ct_MenuDebugNbItems]              =  {None              , None           , SetOnOff        , SetOnOff       , SetOnOff         , SetOnOff           , GotoMaintenance };
 /*-*/ bool   tab_MenuDebugEnable[ct_MenuDebugNbItems]             =  {true              , false          , true            , true           , true             , true               , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
@@ -193,8 +193,8 @@ typedef enum
 {
   MENU,
   TEMPERATURES,
-  SORTIES,
-  HISTO
+  HISTO,
+  DEBUG
 } ScreenType;
 
 typedef struct

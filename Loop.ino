@@ -21,13 +21,12 @@ void loop(void)
       case TEMPERATURES :
         DisplayTempScreen();
         break;
-      case SORTIES :
-        DisplayMenuScreen();
-        DisplayOutputs();
-        break;
       case HISTO :
         DisplayCourbeScreen();
         break;
+      case DEBUG :
+        DisplayDebugScreen();
+        break;        
       default :
         break;
     }

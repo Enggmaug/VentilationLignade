@@ -52,12 +52,6 @@ void GotoDisplayTemp(void)
 /*-NIVEAU 1------------------------------------------------------------------------------------*/
 /*                     Navigation vers l'ecran d'affichage des sorties                         */
 /*---------------------------------------------------------------------------------------------*/
-    bool VentiloCave;
-    bool VentiloCheminee;
-    bool DoubleFlux;
-    bool BypassCave;
-    bool BypassVMC;
-    
 void GotoDisplayOutputs(void)
 {
   int idx;
@@ -110,7 +104,7 @@ void GotoDisplayOutputs(void)
   EcranEnCours.Droite = GotoDisplayTemp;
   EcranEnCours.Gauche = GotoDisplayTemp;
   EcranEnCours.Select = EcranEnCours.pt_MenuFonct[0];
-  EcranEnCours.TypeEcran = SORTIES;
+  EcranEnCours.TypeEcran = MENU;
 }
 
 /*-NIVEAU 1------------------------------------------------------------------------------------*/
@@ -371,7 +365,7 @@ void GotoMaintenance(void)
 
   EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
   EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_MenuMaintEnable[0];
-  EcranEnCours.pt_tab_EnabledItems[2]=not(DebugActivated);
+  EcranEnCours.pt_tab_EnabledItems[2]=DebugActivated;
   EcranEnCours.pt_MenuFonct = (FctPtr *)tab_MenuMaintFonct;
   EcranEnCours.NbItems = ct_MaintenanceNbItems;
   EcranEnCours.SelectedItem = 1;
@@ -389,7 +383,8 @@ void ShowChangeTemp(void)
   int idx;
   MenuChanged = true;
   strcpy(tab_MenuTemp[0], tab_MenuDebug[0]);
-  for (idx = 1; idx < ct_MenuDebugNbItems - 1; idx ++)
+  strcpy(tab_MenuTemp[1], tab_MenuDebug[1]);
+  for (idx = 2; idx < ct_MenuDebugNbItems - 1; idx ++)
   {
     AddValToLine(idx);
   }
@@ -402,7 +397,7 @@ void ShowChangeTemp(void)
   EcranEnCours.Droite = Suivant;
   EcranEnCours.Gauche = Precedent;
   EcranEnCours.Select = EcranEnCours.pt_MenuFonct[EcranEnCours.SelectedItem];
-  EcranEnCours.TypeEcran = MENU;
+  EcranEnCours.TypeEcran = DEBUG;
 }
 /*-NIVEAU 2------------------------------------------------------------------------------------*/
 /*                     Navigation vers l'ecran de réglage Date/Heure                           */
