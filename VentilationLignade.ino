@@ -143,11 +143,11 @@ const FctPtr tab_ResetFonct[ct_ResetNbItems]                      =  {None      
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
 const char   tab_MenuMaint[ct_MaintenanceNbItems][NB_CAR_LIGNE]   =  {"MAINTENANCE"     , "NORMAL"       , "FORCER TEMPER.", "RETOUR"       }; //              |                    |                 |
 const FctPtr tab_MenuMaintFonct[ct_MaintenanceNbItems]            =  {None              , DebugOnOff     , ShowChangeTemp  , GotoMainMenu   }; //              |                    |                 |
-/*-*/ bool   tab_MenuMaintEnable[ct_MaintenanceNbItems]           =  {true              , false          , false           , true           }; //              |                    |                 |
+/*-*/ bool   tab_MenuMaintEnable[ct_MaintenanceNbItems]           =  {true              , true           , true            , true           }; //              |                    |                 |
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
 const char   tab_MenuDebug[ct_MenuDebugNbItems][NB_CAR_LIGNE]     =  {"DEBUG"           , ""             , "T. EXTERIEURE" , "T. INTERIEURE", "T. CHEMINEE"    , "T. PUIT CAN"      , "RETOUR"        };
 const FctPtr tab_MenuDebugFonct[ct_MenuDebugNbItems]              =  {None              , None           , SetOnOff        , SetOnOff       , SetOnOff         , SetOnOff           , GotoMaintenance };
-/*-*/ bool   tab_MenuDebugEnable[ct_MenuDebugNbItems]             =  {true              , false          , true            , true           , true             , false              , true            };
+/*-*/ bool   tab_MenuDebugEnable[ct_MenuDebugNbItems]             =  {true              , false          , true            , true           , true             , true               , true            };
 //-------------------------------------------------------------------+------------------+----------------+-----------------+----------------+------------------+--------------------+-----------------+
 const char   tab_MenuDateHeure[ct_MenuDHNbItems][NB_CAR_LIGNE]    =  {"DATE / HEURE"    , "REGLER DATE"  , "DATE ICI"      , "REGLER HEURE" , "HEURE ICI"      , "RETOUR"           }; //             |
 const FctPtr tab_MenuDateHeureFonct[ct_MenuDHNbItems]             =  {None              , GotoSetDate    , None            , GotoSetHeure   , None             , GotoMainMenu       }; //             |
@@ -249,5 +249,6 @@ Bypass   ByPass_DoubleFlux = {BYPASS_1_O,BYPASS_1_F,ENDSTOP_1_1,ENDSTOP_1_2,fals
 Bypass   ByPass_Cave       = {BYPASS_2_O,BYPASS_2_F,ENDSTOP_2_1,ENDSTOP_2_2,false,false,false,false};
 
 bool DebugActivated = false;
+bool FirstLoop = true;
 
 

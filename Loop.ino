@@ -101,4 +101,5 @@ void loop(void)
     }
 
   }
+  FirstLoop = false;
 }
