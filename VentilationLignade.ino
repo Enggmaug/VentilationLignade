@@ -249,6 +249,7 @@ Bypass   ByPass_DoubleFlux = {BYPASS_1_O,BYPASS_1_F,ENDSTOP_1_1,ENDSTOP_1_2,fals
 Bypass   ByPass_Cave       = {BYPASS_2_O,BYPASS_2_F,ENDSTOP_2_1,ENDSTOP_2_2,false,false,false,false};
 
 bool DebugActivated = false;
-bool FirstLoop = true;
+
+  const int PinNumber[NB_TEMP] = {T_EXT, T_EXT, T_INT, T_CHEMINEE, T_PUIT};
 
 

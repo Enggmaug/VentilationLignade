@@ -33,9 +33,9 @@ void ManageOutputGoal(void)
   
   g_OutputGoal = OutputTable[Reglage][IndexOut];
   
-  digitalWrite(VENT_CAVE ,OutputTable[Reglage][IndexOut].VentiloCave);
-  digitalWrite(VENT_CHEM ,OutputTable[Reglage][IndexOut].VentiloCheminee);
-  digitalWrite(SELECT_VMC,OutputTable[Reglage][IndexOut].DoubleFlux);
+  digitalWrite(VENT_CAVE , not(OutputTable[Reglage][IndexOut].VentiloCave));
+  digitalWrite(VENT_CHEM , not(OutputTable[Reglage][IndexOut].VentiloCheminee));
+  digitalWrite(SELECT_VMC, not(OutputTable[Reglage][IndexOut].DoubleFlux));
   MoveBypass(&ByPass_Cave,      OutputTable[Reglage][IndexOut].BypassCave);
   MoveBypass(&ByPass_DoubleFlux,OutputTable[Reglage][IndexOut].BypassVMC );
 
@@ -49,8 +49,8 @@ void MoveBypass(Bypass *BypassRef,bool goal)
   if (goal == OPEN && BypassRef->isOpen ==false)
   {
     AlimOn();
-    digitalWrite(BypassRef->PinOpen,true);
-    digitalWrite(BypassRef->PinClose,false);
+    digitalWrite(BypassRef->PinOpen,false);
+    digitalWrite(BypassRef->PinClose,true);
     BypassRef->isOpening = true;
     BypassRef->isClosing = false;
     BypassRef->TimeoutCounter = 0;
@@ -59,8 +59,8 @@ void MoveBypass(Bypass *BypassRef,bool goal)
   else if (goal == CLOSE && BypassRef->isClosed ==false)
   {
     AlimOn();
-    digitalWrite(BypassRef->PinOpen,false);
-    digitalWrite(BypassRef->PinClose,true);
+    digitalWrite(BypassRef->PinOpen,true);
+    digitalWrite(BypassRef->PinClose,false);
     BypassRef->isClosing = true;
     BypassRef->isOpening = false;
     BypassRef->TimeoutCounter = 0;
@@ -68,8 +68,8 @@ void MoveBypass(Bypass *BypassRef,bool goal)
   }
   else
   {
-    digitalWrite(BypassRef->PinOpen,false);
-    digitalWrite(BypassRef->PinClose,false);
+    digitalWrite(BypassRef->PinOpen,true);
+    digitalWrite(BypassRef->PinClose,true);
     AlimOff();
   }
 }
@@ -77,13 +77,13 @@ void MoveBypass(Bypass *BypassRef,bool goal)
 
 void AlimOn(void){
   // A améliorer avec Gestion de 2 alims
-  digitalWrite(V12_1_ON,true);
+  digitalWrite(V12_1_ON,false);
 }
 void AlimOff(void){
   // A améliorer avec Gestion de 2 alims
   if((ByPass_DoubleFlux.isClosing == false) && (ByPass_Cave.isClosing == false) && (ByPass_DoubleFlux.isOpening == false) && (ByPass_Cave.isOpening == false))
   {
-    digitalWrite(V12_1_ON,false);  
+    digitalWrite(V12_1_ON,true);  
   }
 }
 
@@ -95,8 +95,8 @@ void CheckMovement(Bypass* BP)
   {
     BP->isClosing = false;
     BP->isOpening = false;
-    digitalWrite(BP->PinOpen,false);
-    digitalWrite(BP->PinClose,false);
+    digitalWrite(BP->PinOpen,true);
+    digitalWrite(BP->PinClose,true);
     AlimOff();
   }
   
@@ -106,8 +106,8 @@ void CheckMovement(Bypass* BP)
     {
       BP->isClosing = false;
       BP->isClosed = true;
-      digitalWrite(BP->PinOpen,false);
-      digitalWrite(BP->PinClose,false);
+      digitalWrite(BP->PinOpen,true);
+      digitalWrite(BP->PinClose,true);
       AlimOff();
     }
   }
@@ -117,8 +117,8 @@ void CheckMovement(Bypass* BP)
     {
       BP->isOpening = false;
       BP->isOpen = true;
-      digitalWrite(BP->PinOpen,false);
-      digitalWrite(BP->PinClose,false);      
+      digitalWrite(BP->PinOpen,true);
+      digitalWrite(BP->PinClose,true);      
       AlimOff();
     }
   }
