@@ -5,9 +5,8 @@
 void GetTemperatures(void)
 {
   int idx;
-  const int PinNumber[NB_TEMP] = {T_EXT, T_EXT, T_INT, T_CHEMINEE, T_PUIT};
 
-  static unsigned int IndexMoyenne = TEMP_SAMPLES_NB;
+  static unsigned int IndexMoyenne = 0;
   static float Releves[NB_TEMP-1][TEMP_SAMPLES_NB] = {0.0};
 
   for (idx = 0; idx < NB_TEMP-1 ; idx ++)
@@ -22,9 +21,12 @@ void GetTemperatures(void)
      for (idx = 1; idx < NB_TEMP ; idx ++)
     {
       Temperatures[idx] = Moyenne( &Releves[idx][0], TEMP_SAMPLES_NB -1, TEMP_SAMPLES_NB);
+      if (Temperatures[idx] > 99.9 ) Temperatures[idx]= 99.9;
+      else if (Temperatures[idx] < -99.9) Temperatures[idx]= -99.9;
     }
       Temperatures[0] = Temperatures[1];  // Les Deux premieres températures sont la même, car on a 2 seuils pour l'exterieur
       IndexMoyenne = 0;
+      MenuChanged=true;
   }
 }
 

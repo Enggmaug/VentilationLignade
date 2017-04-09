@@ -19,6 +19,8 @@ void Reset(void)
 void DebugOnOff(void)
 {
    DebugActivated = not(DebugActivated);
+   GotoMaintenance();
+
    if (DebugActivated == false)
    {
 		GetTemperatures();

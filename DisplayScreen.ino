@@ -221,31 +221,6 @@ void DisplayTempScreen(void)
   interrupts();
 }
 
-
-/*---------------------------------------------------------------------------------------------*/
-/*                                 AFFICHAGE DES SORTIES                                       */
-/*---------------------------------------------------------------------------------------------*/
-void DisplayOutputs(void)
-{
-  int SDColor;
-
-  noInterrupts();
-
-  //AFFICHAGE DE L'ETAT SD
-  if (SdCardPresent)
-   SDColor = VERT;
-  else
-   SDColor = ROUGE;
-  tft.fillCircle(16,16,15,SDColor);
-  tft.setTextColor(GRIS);
-  tft.setTextSize(2);
-  tft.setCursor(5, 10);
-  tft.print("SD");
-
-  //Reautorisation des interruptions
-  interrupts();
-}
-
 /*---------------------------------------------------------------------------------------------*/
 /*                                    AFFICHAGE DES COURBES                                    */
 /*---------------------------------------------------------------------------------------------*/
@@ -405,6 +380,122 @@ if (MaxTemp == MinTemp)
   interrupts();
 }
 
+/*---------------------------------------------------------------------------------------------*/
+/*                          Affichage du menu coloré pour le debug                             */
+/*---------------------------------------------------------------------------------------------*/
+void DisplayDebugScreen(void)
+{
+  int idx;
+  int SDColor;
+  int color;
+
+  noInterrupts();           // Desactivation des interruptions pendant le redessin de l'ecran
+
+  // AFFICHAGE DE LA PREMIERE LIGNE
+  tft.fillScreen(NOIR);
+  tft.setTextColor(NOIR);
+  tft.fillRect(0, 0, tft.width(), (tft.height() / ct_NbItemMax), BLANC);
+  tft.drawFastHLine(0, (tft.height() / ct_NbItemMax) - 1, tft.width(), NOIR);
+  tft.setCursor(tft.width() / 2 - (strlen(EcranEnCours.pt_tab_menu) / 2) * (tft.width() / 17), 5);       // On se positionne au centre, sur la base de 17 caracteres/ligne
+  tft.setTextSize(3);
+  tft.println(EcranEnCours.pt_tab_menu);
+
+
+  // AFFICHAGE DES LIGNES SUIVANTES
+  tft.setTextSize(2);
+  for (idx = 1; idx < EcranEnCours.NbItems; idx++)              // Pour chaque Item du menu
+  {
+    if (idx == 1)
+    {
+      if ((TemperatureDepasseSeuil[idx - 1] == false) and (TemperatureDepasseSeuil[idx] == false))
+      {
+        color = BLEU;
+      }
+      else if ((TemperatureDepasseSeuil[idx - 1] == true) and (TemperatureDepasseSeuil[idx] == true))
+      {
+        color = ROUGE;
+      }
+      else if ((TemperatureDepasseSeuil[idx - 1] == true) and (TemperatureDepasseSeuil[idx] == false))
+      {
+        color = VERT;
+      }
+      else
+      {
+        //error
+        color = NOIR;
+      }
+    }
+    else {
+
+      if (TemperatureDepasseSeuil[idx] == false)
+      {
+        color = BLEU;
+      }
+      else
+      {
+        color = ROUGE;
+      }
+    }
+
+    if (EcranEnCours.SelectedItem == 2)         // Si Item RETOUR
+    {
+      if (idx == EcranEnCours.SelectedItem)                       // Item Selectionn�
+      {
+        tft.setTextColor(NOIR);                          // Police noire sur fond blanc
+        tft.fillRect(0, (tft.height() / ct_NbItemMax) * idx, tft.width(), (tft.height() / ct_NbItemMax), BLANC);
+      }
+      else                                                       // Item D�selectionn�
+      {
+        tft.setTextColor(BLANC);                         // Police blanche sur fond noir
+        tft.fillRect(0, (tft.height() / ct_NbItemMax) * idx, tft.width(), (tft.height() / ct_NbItemMax), NOIR);
+      }
+    }
+    else
+    {
+      if (EcranEnCours.pt_tab_EnabledItems[idx] == false)         // Si Item Desactiv�
+      {
+        if (idx == EcranEnCours.SelectedItem)                     //Et si item selectionn�, on change d'item selectionn�
+        {
+          Suivant();
+        }
+        tft.setTextColor(GRIS);                         // Police grise sur fond noir
+        tft.fillRect(0, (tft.height() / ct_NbItemMax) * idx, tft.width(), (tft.height() / ct_NbItemMax), NOIR);
+      }
+      else if (idx == EcranEnCours.SelectedItem)                       // Item Selectionn�
+      {
+        tft.setTextColor(NOIR);                          // Police noire sur fond blanc
+        tft.fillRect(0, (tft.height() / ct_NbItemMax) * idx, tft.width(), (tft.height() / ct_NbItemMax), color);
+      }
+      else                                                       // Item D�selectionn�
+      {
+        tft.setTextColor(color);                         // Police blanche sur fond noir
+        tft.fillRect(0, (tft.height() / ct_NbItemMax) * idx, tft.width(), (tft.height() / ct_NbItemMax), NOIR);
+      }
+    }
+  
+    tft.setCursor(20, 10 + (tft.height() / ct_NbItemMax) * idx);
+    tft.println( (char*)(EcranEnCours.pt_tab_menu + NB_CAR_LIGNE * idx));
+  }
+
+  for (idx = EcranEnCours.NbItems; idx < ct_NbItemMax; idx++)   // Suppression des autres Items
+  {
+    tft.fillRect(0, (tft.height() / ct_NbItemMax) * idx, tft.width(), (tft.height() / ct_NbItemMax), NOIR);
+  }
+
+  //AFFICHAGE DE L'ETAT SD
+  if (SdCardPresent)
+   SDColor = VERT;
+  else
+   SDColor = ROUGE;
+  tft.fillCircle(16,16,15,SDColor);
+  tft.setTextColor(GRIS);
+  tft.setTextSize(2);
+  tft.setCursor(5, 10);
+  tft.print("SD");
+
+  //Reautorisation des interruptions
+  interrupts();
+}
 /*---------------------------------------------------------------------------------------------*/
 /*             Interdiction des Items qui ne sont pas accessibles si pas de SD                 */
 /*---------------------------------------------------------------------------------------------*/

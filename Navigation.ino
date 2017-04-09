@@ -52,12 +52,6 @@ void GotoDisplayTemp(void)
 /*-NIVEAU 1------------------------------------------------------------------------------------*/
 /*                     Navigation vers l'ecran d'affichage des sorties                         */
 /*---------------------------------------------------------------------------------------------*/
-    bool VentiloCave;
-    bool VentiloCheminee;
-    bool DoubleFlux;
-    bool BypassCave;
-    bool BypassVMC;
-    
 void GotoDisplayOutputs(void)
 {
   int idx;
@@ -110,7 +104,7 @@ void GotoDisplayOutputs(void)
   EcranEnCours.Droite = GotoDisplayTemp;
   EcranEnCours.Gauche = GotoDisplayTemp;
   EcranEnCours.Select = EcranEnCours.pt_MenuFonct[0];
-  EcranEnCours.TypeEcran = SORTIES;
+  EcranEnCours.TypeEcran = MENU;
 }
 
 /*-NIVEAU 1------------------------------------------------------------------------------------*/
@@ -348,28 +342,38 @@ void GotoResetScreen(void)
 void GotoMaintenance(void)
 {
   int idx ;
-  char* str;
 
   MenuChanged = true;
   for(idx = 0;idx<ct_MaintenanceNbItems;idx++)
   {
-    str = &tab_MenuTemp[idx][0];
     if(idx == 1)
     {
       if (DebugActivated == false)
       {
-         str= strcpy(tab_MenuTemp[idx],"NORMAL");
+         strcpy(tab_MenuTemp[idx],"NORMAL");
       }
       else
       {
-        str= strcpy(tab_MenuTemp[idx],"DEBUG");
+        strcpy(tab_MenuTemp[idx],"DEBUG");
       }
     }
     else
     {
-      str= strcpy(tab_MenuTemp[idx], tab_MenuMaint[idx]);
+      strcpy(tab_MenuTemp[idx], tab_MenuMaint[idx]);
     }
   }
+
+  EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
+  EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_MenuMaintEnable[0];
+  EcranEnCours.pt_tab_EnabledItems[2]=DebugActivated;
+  EcranEnCours.pt_MenuFonct = (FctPtr *)tab_MenuMaintFonct;
+  EcranEnCours.NbItems = ct_MaintenanceNbItems;
+  EcranEnCours.SelectedItem = 1;
+  EcranEnCours.Droite = Suivant;
+  EcranEnCours.Gauche = Precedent;
+  EcranEnCours.Select = EcranEnCours.pt_MenuFonct[EcranEnCours.SelectedItem];
+  EcranEnCours.TypeEcran = MENU;
+  
 }
 /*-NIVEAU 3------------------------------------------------------------------------------------*/
 /*             Navigation vers l'ecran de changement des Temp en mode Debug                    */
@@ -379,11 +383,12 @@ void ShowChangeTemp(void)
   int idx;
   MenuChanged = true;
   strcpy(tab_MenuTemp[0], tab_MenuDebug[0]);
-  for (idx = 1; idx < ct_MenuDebugNbItems - 1; idx ++)
+  strcpy(tab_MenuTemp[1], tab_MenuDebug[1]);
+  for (idx = 2; idx < ct_MenuDebugNbItems - 1; idx ++)
   {
     AddValToLine(idx);
   }
-  strcpy(tab_MenuTemp[ct_MenuDebugNbItems - 1], tab_MenuSeuils[ct_MenuDebugNbItems - 1]);
+  strcpy(tab_MenuTemp[ct_MenuDebugNbItems - 1], tab_MenuDebug[ct_MenuDebugNbItems - 1]);
   EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
   EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_MenuDebugEnable[0];
   EcranEnCours.pt_MenuFonct = (FctPtr *)tab_MenuDebugFonct;
@@ -392,7 +397,7 @@ void ShowChangeTemp(void)
   EcranEnCours.Droite = Suivant;
   EcranEnCours.Gauche = Precedent;
   EcranEnCours.Select = EcranEnCours.pt_MenuFonct[EcranEnCours.SelectedItem];
-  EcranEnCours.TypeEcran = MENU;
+  EcranEnCours.TypeEcran = DEBUG;
 }
 /*-NIVEAU 2------------------------------------------------------------------------------------*/
 /*                     Navigation vers l'ecran de réglage Date/Heure                           */
@@ -628,7 +633,7 @@ void SetMode(void)
 char* AddValToLine(int idx)
 {
   char* str;
-  char DisplayedVal[16] = "";
+  char DisplayedVal[NB_CAR_LIGNE] = "";
 
   if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_MenuSeuils[0][0]) == 0)
   {
@@ -647,6 +652,13 @@ char* AddValToLine(int idx)
     str = strcpy(tab_MenuTemp[idx], &tab_MenuMinMax[idx][0]);
     str = strncat(str + strlen(str), BlankLine, NB_CAR_LIGNE - 13 - strlen(str));
     sprintf(DisplayedVal, " : %2.1f/%2.1f", MinMax[MIN][idx - 1], MinMax[MAX][idx - 1]);
+
+  }
+  else if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_MenuDebug[0][0]) == 0)
+  {
+    str = strcpy(tab_MenuTemp[idx], &tab_MenuDebug[idx][0]);
+    str = strncat(str + strlen(str), BlankLine, NB_CAR_LIGNE - NB_CAR_T - strlen(str));
+    sprintf(DisplayedVal, " : %2.1f", Temperatures[idx - 1]);
 
   }
   else
