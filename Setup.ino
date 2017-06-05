@@ -1,10 +1,34 @@
 void setup(void)
 {
+  int idx;
+  
   pinMode(RTCLK_CS, OUTPUT);       // chip select pin
   pinMode(COD_CLK, INPUT);
   pinMode(COD_DT, INPUT);
   pinMode(COD_SW, INPUT);
   pinMode(RTCLK_INT, INPUT);
+
+ pinMode( BYPASS_1_F, OUTPUT);
+ pinMode( BYPASS_1_O, OUTPUT);
+ pinMode( BYPASS_2_F, OUTPUT);
+ pinMode( BYPASS_2_O, OUTPUT);
+ pinMode( VENT_CAVE, OUTPUT);
+ pinMode( VENT_CHEM, OUTPUT);
+ pinMode( V12_1_ON, OUTPUT);
+ pinMode( SELECT_VMC, OUTPUT);
+ pinMode( V12_2_ON, OUTPUT);
+ pinMode( SELECT_12V, OUTPUT);
+
+ digitalWrite(BYPASS_1_F ,true);
+ digitalWrite(BYPASS_1_O ,true);
+ digitalWrite(BYPASS_2_F ,true);
+ digitalWrite(BYPASS_2_O ,true);
+ digitalWrite(VENT_CAVE ,true);
+ digitalWrite(VENT_CHEM ,true);
+ digitalWrite(V12_1_ON ,true);
+ digitalWrite(SELECT_VMC ,true);
+ digitalWrite(V12_2_ON ,true);
+ digitalWrite(SELECT_12V ,true);
 
   DS3234_init(RTCLK_CS, DS3234_INTCN);
 
@@ -23,7 +47,7 @@ void setup(void)
   SdCardPresent = SD.begin(SDCARD_CS);
   tft.begin();
 
-  tft.setRotation(3);
+  tft.setRotation(1);
 
   MenuChanged = true;
   Reglage = MI_SAISON;
@@ -48,38 +72,12 @@ void setup(void)
 
   SetAlarmMinutes();
 
-  //TESTS
-  Seuils[0][EXTERIEUR_L] = 15.2;
-  Seuils[0][EXTERIEUR_H] = 24.7;
-  Seuils[0][INTERIEUR]   = 22.6;
-  Seuils[0][CHEMINEE]    = 50.0;
-  Seuils[0][PUIT_CANAD]  = 15.2;
-  Hysteresis[0][EXTERIEUR_L] = 1.2;
-  Hysteresis[0][EXTERIEUR_H] = 2.7;
-  Hysteresis[0][INTERIEUR]   = 1.6;
-  Hysteresis[0][CHEMINEE]    = 5.0;
-  Hysteresis[0][PUIT_CANAD]  = 3.2;
-  MinMax[MIN][EXTERIEUR_L] = -8.3;
-  MinMax[MIN][EXTERIEUR_H] = -8.3;
-  MinMax[MIN][INTERIEUR]   = 19.9;
-  MinMax[MIN][CHEMINEE]    = 18.7;
-  MinMax[MIN][PUIT_CANAD]  = 13.2;
-  MinMax[MAX][EXTERIEUR_L] = 33.2;
-  MinMax[MAX][EXTERIEUR_H] = 33.2;
-  MinMax[MAX][INTERIEUR]   = 22.2;
-  MinMax[MAX][CHEMINEE]    = 95.0;
-  MinMax[MAX][PUIT_CANAD]  = 17.2;
-  Temperatures[EXTERIEUR_L] = 19.9;
-  Temperatures[EXTERIEUR_H] = 19.9;
-  Temperatures[INTERIEUR]   = 21.8;
-  Temperatures[CHEMINEE]    = 51.7;
-  Temperatures[PUIT_CANAD]  = 15.4;
-  TemperatureDepasseSeuil[EXTERIEUR_L] = true;
-  TemperatureDepasseSeuil[EXTERIEUR_H] = false;
-  TemperatureDepasseSeuil[INTERIEUR]   = false;
-  TemperatureDepasseSeuil[CHEMINEE]    = true;
-  TemperatureDepasseSeuil[PUIT_CANAD]  = false;
-
   Reglage = ETE;
+
+for (idx = 1; idx < NB_TEMP ; idx ++)
+  {
+    Temperatures[idx] = ReadTemperature(PinNumber[idx]);
+  }
+      Temperatures[0] = Temperatures[1];  // Les Deux premieres températures sont la même, car on a 2 seuils pour l'exterieur
 }
 

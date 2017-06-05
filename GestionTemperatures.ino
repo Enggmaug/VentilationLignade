@@ -5,7 +5,6 @@
 void GetTemperatures(void)
 {
   int idx;
-  const int PinNumber[NB_TEMP] = {T_EXT, T_EXT, T_INT, T_CHEMINEE, T_PUIT};
 
   static unsigned int IndexMoyenne = 0;
   static float Releves[NB_TEMP-1][TEMP_SAMPLES_NB] = {0.0};
@@ -27,6 +26,7 @@ void GetTemperatures(void)
     }
       Temperatures[0] = Temperatures[1];  // Les Deux premieres températures sont la même, car on a 2 seuils pour l'exterieur
       IndexMoyenne = 0;
+      MenuChanged=true;
   }
   else if (FirstLoop == true)
   {
