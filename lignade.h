@@ -82,9 +82,9 @@ void SaveTime(void);
 void RecallTime(void);
 float ConvertThermistorValue(unsigned int input);
 void ManageOutputGoal(void);
-void MoveBypass(Bypass *BypassRef,bool goal);
+void MoveBypass(struct Bypass *BypassRef,bool goal);
 void AlimOn(void);
 void AlimOff(void);
-void CheckMovement(Bypass* BP);
+void CheckMovement(struct Bypass* BP);
 void DebugOnOff(void);
 

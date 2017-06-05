@@ -9,7 +9,7 @@
 
 #define NB_MODES    3
 
-typedef struct
+struct Bypass
 {
   int PinOpen;
   int PinClose;
@@ -20,16 +20,16 @@ typedef struct
   bool isClosed;
   bool isClosing;
   unsigned int TimeoutCounter;
-} Bypass;
+} ;
 
-typedef struct OutputGoal
+struct OutputGoal
 {
     bool VentiloCave;
     bool VentiloCheminee;
     bool DoubleFlux;
     bool BypassCave;
     bool BypassVMC;
-} OutputGoal;
+} ;
 
 OutputGoal g_OutputGoal = {TURN_OFF, TURN_OFF, DOUBLE_FLUX, CLOSE, CLOSE};
 

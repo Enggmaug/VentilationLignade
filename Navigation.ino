@@ -370,6 +370,19 @@ void GotoMaintenance(void)
       str= strcpy(tab_MenuTemp[idx], tab_MenuMaint[idx]);
     }
   }
+
+  EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
+  EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_MenuMaintEnable[0];
+  EcranEnCours.pt_tab_EnabledItems[2]=not(DebugActivated);
+  EcranEnCours.pt_MenuFonct = (FctPtr *)tab_MenuMaintFonct;
+  EcranEnCours.NbItems = ct_MaintenanceNbItems;
+  EcranEnCours.SelectedItem = 1;
+  EcranEnCours.Droite = Suivant;
+  EcranEnCours.Gauche = Precedent;
+  EcranEnCours.Select = EcranEnCours.pt_MenuFonct[EcranEnCours.SelectedItem];
+  EcranEnCours.TypeEcran = MENU;
+  
+
 }
 /*-NIVEAU 3------------------------------------------------------------------------------------*/
 /*             Navigation vers l'ecran de changement des Temp en mode Debug                    */
@@ -383,7 +396,7 @@ void ShowChangeTemp(void)
   {
     AddValToLine(idx);
   }
-  strcpy(tab_MenuTemp[ct_MenuDebugNbItems - 1], tab_MenuSeuils[ct_MenuDebugNbItems - 1]);
+  strcpy(tab_MenuTemp[ct_MenuDebugNbItems - 1], tab_MenuDebug[ct_MenuDebugNbItems - 1]);
   EcranEnCours.pt_tab_menu = (char *)&tab_MenuTemp[0][0];
   EcranEnCours.pt_tab_EnabledItems = (bool *)&tab_MenuDebugEnable[0];
   EcranEnCours.pt_MenuFonct = (FctPtr *)tab_MenuDebugFonct;
@@ -628,7 +641,7 @@ void SetMode(void)
 char* AddValToLine(int idx)
 {
   char* str;
-  char DisplayedVal[16] = "";
+  char DisplayedVal[NB_CAR_LIGNE] = "";
 
   if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_MenuSeuils[0][0]) == 0)
   {
@@ -647,6 +660,13 @@ char* AddValToLine(int idx)
     str = strcpy(tab_MenuTemp[idx], &tab_MenuMinMax[idx][0]);
     str = strncat(str + strlen(str), BlankLine, NB_CAR_LIGNE - 13 - strlen(str));
     sprintf(DisplayedVal, " : %2.1f/%2.1f", MinMax[MIN][idx - 1], MinMax[MAX][idx - 1]);
+
+  }
+  else if (strcmp(EcranEnCours.pt_tab_menu, (char*)&tab_MenuDebug[0][0]) == 0)
+  {
+    str = strcpy(tab_MenuTemp[idx], &tab_MenuDebug[idx][0]);
+    str = strncat(str + strlen(str), BlankLine, NB_CAR_LIGNE - NB_CAR_T - strlen(str));
+    sprintf(DisplayedVal, " : %2.1f", Temperatures[idx - 1]);
 
   }
   else
