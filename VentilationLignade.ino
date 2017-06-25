@@ -1,6 +1,7 @@
 #define VERSION "1.0.0"
 
-#include "ILI9341_t3.h"
+#include "Adafruit_GFX.h"
+#include "Adafruit_ILI9341.h"
 #include <SD.h>
 #include "ds3234.h"
 #include "Thermistor.h"
@@ -185,10 +186,10 @@ bool SeuilTriggered;
 
 
 // Si carte SD présente
-bool SdCardPresent;
+bool SdCardPresent = false;
 
 // TFT Screen
-ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 //Gestion de navigation - écrans menu
 typedef enum
@@ -196,6 +197,7 @@ typedef enum
   MENU,
   TEMPERATURES,
   HISTO,
+  SORTIES,
   DEBUG
 } ScreenType;
 

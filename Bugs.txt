@@ -1,0 +1,25 @@
+1 : Probleme
+Reset de l'écran toutes les 10 secondes
+
+2 :Probleme
+Température 99.9 dépasse le thermomètre Puit Canadien
+
+3 :Probleme
+Températures 99.9°C inférieures aux valeurs de seuils qui sont pourtant de 16 et 41°C
+
+4 :Probleme
+Pas d'écran Sorties
+
+5: Probleme
+Reglage seuils : lignes 1 et 5 griséees sans texte, à 15°C
+
+6 : Amélioration
+Manque Voyant de Maintenance sur tous les écrans
+
+7: Amélioration
+ecran reglages heure à déplacer sous maintenance
+
+8: Amélioration
+Manque le rappel du mode dans les réglages de seuils, sorties et températures
+
+

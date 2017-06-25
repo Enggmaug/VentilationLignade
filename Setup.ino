@@ -30,6 +30,8 @@ void setup(void)
  digitalWrite(V12_2_ON ,true);
  digitalWrite(SELECT_12V ,true);
 
+  tft.begin();
+  delay(2000);
   DS3234_init(RTCLK_CS, DS3234_INTCN);
 
   MenuChanged = true;
@@ -45,7 +47,6 @@ void setup(void)
   /*Start des services*/
   Serial.begin(9600);
   SdCardPresent = SD.begin(SDCARD_CS);
-  tft.begin();
 
   tft.setRotation(1);
 
